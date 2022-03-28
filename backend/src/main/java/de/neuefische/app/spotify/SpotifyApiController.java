@@ -53,8 +53,6 @@ public class SpotifyApiController {
         );
 
         userService.saveUser(new UserDocument(userResponse.getBody().email(), userResponse.getBody().id(), userResponse.getBody().name(), null, null));
-
-        //response.sendRedirect("/courses?jwt=" + jwtUtils.createToken(new HashMap<>(), userResponse.getBody().email()));
     }
 
     HttpHeaders createGetTokenHeaders(){
@@ -69,8 +67,5 @@ public class SpotifyApiController {
             set( "Authorization", authHeader );
         }};
     }
-
-
-
 
 }
