@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 @RestController
-@RequestMapping("/callback")
+@RequestMapping("/api/callback")
 public class SpotifyApiController {
 
     private static final String ACCESS_TOKEN_URL = "https://accounts.spotify.com/api/token";
