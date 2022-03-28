@@ -1,24 +1,10 @@
-import React, { useState, useEffect } from 'react';
+
 
 function App() {
 
-    const [greeting, setGreeting] = useState('')
-
-    useEffect(() => {
-        fetch('/api/greeting', {
-            method: 'GET',
-            headers: {
-                'Accept': 'text/plain'
-            }
-        })
-            .then(response => response.text())
-            .then(text => setGreeting(text))
-            .catch(err => setGreeting('Da ist etwas schief gelaufen'));
-    }, []);
-
     return (
         <div>
-            {greeting}
+            <a href="https://accounts.spotify.com/authorize?response_type=code&client_id=80640b8612764947a6329d3103743e02&scope=user-read-private&redirect_uri=http://localhost:8080/api/callback"><button >Spotify-Login</button></a>
         </div>
     );
 }
