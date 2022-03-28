@@ -10,11 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Base64;
-
 @RestController
 @RequestMapping("/api/callback")
 public class SpotifyApiController {
@@ -36,7 +31,7 @@ public class SpotifyApiController {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", code);
-        map.add("redirect_uri", "http://localhost:8080/callback");
+        map.add("redirect_uri", "http://localhost:8080/api/callback");
         HttpHeaders headers = createGetTokenHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<SpotifyResponse> accessTokenResponse = restTemplate.exchange(
@@ -47,13 +42,11 @@ public class SpotifyApiController {
         );
     }
 
-HttpHeaders createGetTokenHeaders(){
-    HttpHeaders header = new HttpHeaders();
-        header.setBasicAuth(spotifyClientId,spotifyAuthSecret);
-        header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        return header;
-        }};
-    }
+    HttpHeaders createGetTokenHeaders(){
+        HttpHeaders header = new HttpHeaders();
+            header.setBasicAuth(spotifyClientId,spotifyAuthSecret);
+            return header;
+        }
 
 
 }
