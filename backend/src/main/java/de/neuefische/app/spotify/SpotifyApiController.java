@@ -47,12 +47,11 @@ public class SpotifyApiController {
         );
     }
 
-    HttpHeaders createGetTokenHeaders(){
-        return new HttpHeaders() {{
-            String forHeader = spotifyClientId+":"+spotifyAuthSecret;
-            String encodedString = Base64.getEncoder().encodeToString(forHeader.getBytes());
-            set( "Authorization", "Basic " + encodedString );
-            setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+HttpHeaders createGetTokenHeaders(){
+    HttpHeaders header = new HttpHeaders();
+        header.setBasicAuth(spotifyClientId,spotifyAuthSecret);
+        header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        return header;
         }};
     }
 
