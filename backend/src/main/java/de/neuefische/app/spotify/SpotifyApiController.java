@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/callback")
 public class SpotifyApiController {
@@ -45,6 +47,37 @@ public class SpotifyApiController {
                 SpotifyResponse.class
         );
 
+        //saveSpotifyUser(accessTokenResponse);
+        getSpotifyUserPlaylists(accessTokenResponse);
+    }
+
+    private void getSpotifyUserPlaylists(ResponseEntity<SpotifyResponse> accessTokenResponse) {
+        ResponseEntity<SpotifyGetPlaylistResponse> userPlaylistsResponse = restTemplate.exchange(
+                "https://api.spotify.com/v1/me/playlists",
+                HttpMethod.GET,
+                new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
+                SpotifyGetPlaylistResponse.class
+        );
+
+        for( SpotifyPlaylistItems playlist : userPlaylistsResponse.getBody().items()){
+            ResponseEntity<SpotifyPlaylistItemsResponse> userPlaylistsTracksResponse = restTemplate.exchange(
+                    "https://api.spotify.com/v1/playlists/"+playlist.id()+"/tracks",
+                    HttpMethod.GET,
+                    new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
+                    SpotifyPlaylistItemsResponse.class
+            );
+            SpotifyPlaylistItemsResponse reponseBody = userPlaylistsTracksResponse.getBody();
+            List<SpotifyPlaylistTracks> tracks = reponseBody.tracks();
+        }
+    }
+
+    HttpHeaders createGetTokenHeaders(){
+        HttpHeaders header = new HttpHeaders();
+            header.setBasicAuth(spotifyClientId,spotifyAuthSecret);
+            return header;
+    }
+
+    private void saveSpotifyUser(ResponseEntity<SpotifyResponse> accessTokenResponse){
         ResponseEntity<SpotifyUser> userResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/me",
                 HttpMethod.GET,
@@ -53,12 +86,6 @@ public class SpotifyApiController {
         );
 
         userService.saveUser(new UserDocument(userResponse.getBody().email(), userResponse.getBody().id(), userResponse.getBody().name(), null, null));
-    }
-
-    HttpHeaders createGetTokenHeaders(){
-        HttpHeaders header = new HttpHeaders();
-            header.setBasicAuth(spotifyClientId,spotifyAuthSecret);
-            return header;
     }
 
     HttpHeaders createHeaders(String token){
