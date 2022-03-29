@@ -53,21 +53,21 @@ public class SpotifyApiController {
 
     private void getSpotifyUserPlaylists(ResponseEntity<SpotifyResponse> accessTokenResponse) {
         ResponseEntity<SpotifyGetPlaylistResponse> userPlaylistsResponse = restTemplate.exchange(
-                "https://api.spotify.com/v1/me/playlists",
+                "https://api.spotify.com/v1/me/playlists?limit=2&offset=20",
                 HttpMethod.GET,
                 new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
                 SpotifyGetPlaylistResponse.class
         );
 
-        for( SpotifyPlaylistItems playlist : userPlaylistsResponse.getBody().items()){
+        for(SpotifyPlaylistItems playlist : userPlaylistsResponse.getBody().items()){
             ResponseEntity<SpotifyPlaylistItemsResponse> userPlaylistsTracksResponse = restTemplate.exchange(
                     "https://api.spotify.com/v1/playlists/"+playlist.id()+"/tracks",
                     HttpMethod.GET,
                     new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
                     SpotifyPlaylistItemsResponse.class
             );
-            SpotifyPlaylistItemsResponse reponseBody = userPlaylistsTracksResponse.getBody();
-            List<SpotifyPlaylistTracks> tracks = reponseBody.tracks();
+            SpotifyPlaylistItemsResponse responseBody = userPlaylistsTracksResponse.getBody();
+            List<SpotifyPlaylistTracks> tracks = responseBody.items();
         }
     }
 

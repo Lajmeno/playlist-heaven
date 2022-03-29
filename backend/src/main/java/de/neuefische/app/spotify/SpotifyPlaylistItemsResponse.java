@@ -5,6 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record SpotifyPlaylistItemsResponse(
-        @JsonProperty("items") List<SpotifyPlaylistTracks> tracks
+        @JsonProperty("items") List<SpotifyPlaylistTracks> items
 ) {
 }
