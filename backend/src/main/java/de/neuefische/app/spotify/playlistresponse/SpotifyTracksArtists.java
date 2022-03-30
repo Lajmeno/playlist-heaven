@@ -1,4 +1,4 @@
-package de.neuefische.app.spotify;
+package de.neuefische.app.spotify.playlistresponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

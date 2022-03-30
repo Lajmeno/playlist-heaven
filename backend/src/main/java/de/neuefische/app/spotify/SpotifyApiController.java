@@ -1,5 +1,12 @@
 package de.neuefische.app.spotify;
 
+import de.neuefische.app.playlist.PlaylistData;
+import de.neuefische.app.playlist.PlaylistImage;
+import de.neuefische.app.playlist.PlaylistService;
+import de.neuefische.app.playlist.PlaylistTrack;
+import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsResponse;
+import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistResponse;
+import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsItems;
 import de.neuefische.app.user.UserDocument;
 import de.neuefische.app.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +31,15 @@ public class SpotifyApiController {
     private final String spotifyClientId;
     private final String spotifyAuthSecret;
     private final UserService userService;
+    private final PlaylistService playlistService;
 
-    public SpotifyApiController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId, @Value("${spotify.client.secret}") String spotifyAuthSecret, UserService userService) {
+    public SpotifyApiController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId, @Value("${spotify.client.secret}") String spotifyAuthSecret,
+                                UserService userService,PlaylistService playlistService) {
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.userService = userService;
+        this.playlistService= playlistService;
     }
 
     @GetMapping
@@ -40,34 +50,37 @@ public class SpotifyApiController {
         map.add("redirect_uri", "http://localhost:8080/api/callback");
         HttpHeaders headers = createGetTokenHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<SpotifyResponse> accessTokenResponse = restTemplate.exchange(
+        ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse = restTemplate.exchange(
                 ACCESS_TOKEN_URL,
                 HttpMethod.POST,
                 request,
-                SpotifyResponse.class
+                SpotifyGetAccesTokenResponse.class
         );
 
-        //saveSpotifyUser(accessTokenResponse);
-        getSpotifyUserPlaylists(accessTokenResponse);
+        UserDocument user= saveSpotifyUser(accessTokenResponse);
+        getSpotifyUserPlaylists(accessTokenResponse, user);
     }
 
-    private void getSpotifyUserPlaylists(ResponseEntity<SpotifyResponse> accessTokenResponse) {
-        ResponseEntity<SpotifyGetPlaylistResponse> userPlaylistsResponse = restTemplate.exchange(
+    private void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse, UserDocument user) {
+        ResponseEntity<SpotifyGetAllUserPlaylistsResponse> userPlaylistsResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/me/playlists?limit=2&offset=20",
                 HttpMethod.GET,
                 new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                SpotifyGetPlaylistResponse.class
+                SpotifyGetAllUserPlaylistsResponse.class
         );
 
-        for(SpotifyPlaylistItems playlist : userPlaylistsResponse.getBody().items()){
-            ResponseEntity<SpotifyPlaylistItemsResponse> userPlaylistsTracksResponse = restTemplate.exchange(
-                    "https://api.spotify.com/v1/playlists/"+playlist.id()+"/tracks",
+        for(SpotifyGetAllUserPlaylistsItems playlist : userPlaylistsResponse.getBody().items()){
+            ResponseEntity<SpotifyGetPlaylistResponse> userPlaylistsTracksResponse = restTemplate.exchange(
+                    "https://api.spotify.com/v1/playlists/"+playlist.id(),
                     HttpMethod.GET,
                     new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                    SpotifyPlaylistItemsResponse.class
+                    SpotifyGetPlaylistResponse.class
             );
-            SpotifyPlaylistItemsResponse responseBody = userPlaylistsTracksResponse.getBody();
-            List<SpotifyPlaylistTracks> tracks = responseBody.items();
+            SpotifyGetPlaylistResponse responseBody = userPlaylistsTracksResponse.getBody();
+            List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
+            List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
+            PlaylistData playlistData = new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, user.getSpotifyId());
+            playlistService.savePlaylist(playlistData);
         }
     }
 
@@ -77,7 +90,7 @@ public class SpotifyApiController {
             return header;
     }
 
-    private void saveSpotifyUser(ResponseEntity<SpotifyResponse> accessTokenResponse){
+    private UserDocument saveSpotifyUser(ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse){
         ResponseEntity<SpotifyUser> userResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/me",
                 HttpMethod.GET,
@@ -85,7 +98,7 @@ public class SpotifyApiController {
                 SpotifyUser.class
         );
 
-        userService.saveUser(new UserDocument(userResponse.getBody().email(), userResponse.getBody().id(), userResponse.getBody().name(), null, null));
+        return userService.saveUser(new UserDocument(userResponse.getBody().email(), userResponse.getBody().id(), userResponse.getBody().name(), null, null));
     }
 
     HttpHeaders createHeaders(String token){

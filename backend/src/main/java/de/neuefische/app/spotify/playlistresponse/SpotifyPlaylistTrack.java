@@ -1,4 +1,4 @@
-package de.neuefische.app.spotify;
+package de.neuefische.app.spotify.playlistresponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,6 +8,6 @@ public record SpotifyPlaylistTrack(
         @JsonProperty("name") String name,
         @JsonProperty("id") String id,
         @JsonProperty("album") SpotifyTracksAlbum album,
-        @JsonProperty("artists") List<SpotifyTracksArtists> artist
+        @JsonProperty("artists") List<SpotifyTracksArtists> artists
 ) {
 }
