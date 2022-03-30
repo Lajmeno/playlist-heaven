@@ -1,10 +1,11 @@
-package de.neuefische.app.spotify;
+package de.neuefische.app.spotify.playlistresponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record SpotifyPlaylistTracks (
-        @JsonProperty("track") SpotifyPlaylistTrack track,
-        @JsonProperty("added_at") String addedAt
+import java.util.List;
 
+public record SpotifyPlaylistTracks (
+        @JsonProperty("items") List<SpotifyGetPlaylistsItems> items,
+        @JsonProperty("added_at") String addedAt
 ) {
 }

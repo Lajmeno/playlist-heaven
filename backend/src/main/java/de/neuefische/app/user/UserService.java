@@ -9,7 +9,7 @@ public class UserService {
 
     private final UserRepo userRepo;
 
-    public void saveUser(UserDocument user) {
-        userRepo.save(user);
+    public UserDocument saveUser(UserDocument user) {
+        return userRepo.save(user);
     }
 }
