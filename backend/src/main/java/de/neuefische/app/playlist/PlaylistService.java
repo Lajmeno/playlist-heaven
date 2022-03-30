@@ -1,5 +1,6 @@
 package de.neuefische.app.playlist;
 
+import de.neuefische.app.playlist.dto.PlaylistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,10 @@ public class PlaylistService {
 
     private final PlaylistRepository playlistRepository;
 
-    public Optional<PlaylistDTO> savePlaylist(PlaylistData playlistData){
+    public Optional<PlaylistData> savePlaylist(PlaylistData playlistData){
         Optional<PlaylistData> playlistFromRepo = playlistRepository.findBySpotifyId(playlistData.getSpotifyId());
         if(playlistFromRepo.equals(Optional.empty())){
-            return Optional.of(PlaylistDTO.of(playlistRepository.save(playlistData)));
+            return Optional.of(playlistRepository.save(playlistData));
         }
         return Optional.empty();
     }

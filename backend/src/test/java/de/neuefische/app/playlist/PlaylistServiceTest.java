@@ -1,5 +1,6 @@
 package de.neuefische.app.playlist;
 
+import de.neuefische.app.playlist.dto.PlaylistDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -18,7 +19,7 @@ class PlaylistServiceTest {
         when(repository.findBySpotifyId("33")).thenReturn(Optional.of(playlist1));
         PlaylistService service = new PlaylistService(repository);
 
-        Optional<PlaylistDTO> savedPlaylist = service.savePlaylist(playlist1);
+        Optional<PlaylistData> savedPlaylist = service.savePlaylist(playlist1);
         assertThat(savedPlaylist).isEqualTo(Optional.empty());
     }
 
