@@ -20,8 +20,8 @@ export default function PlaylistOverview() {
     return(
         <div>
             <h2>Your Playlists</h2>
-            {playlists.
-            map(item => <PlaylistItem name={item.name} images={item.images}/>)}
+            {playlists
+            .map(item => <PlaylistItem name={item.name} images={item.images}/>)}
         </div>
     )
 }
