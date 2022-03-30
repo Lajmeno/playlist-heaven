@@ -4,6 +4,7 @@ import de.neuefische.app.playlist.dto.PlaylistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,5 +19,9 @@ public class PlaylistService {
             return Optional.of(playlistRepository.save(playlistData));
         }
         return Optional.empty();
+    }
+
+    public List<PlaylistData> getPlaylists() {
+        return playlistRepository.findAll();
     }
 }
