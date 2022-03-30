@@ -15,7 +15,7 @@ export default function PlaylistOverview() {
         })
         .then(request => request.json())
         .then(requestBody => setPlaylists(requestBody))
-    })
+    }, [])
 
     return(
         <div>
