@@ -11,7 +11,11 @@ export default function PlaylistOverview() {
 
     useEffect(() => {
         fetch('http://localhost:8080/api/playlists', {
-            method: 'GET'
+            method: 'GET',
+            headers:{
+                "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+            }
+            
         })
         .then(request => request.json())
         .then(requestBody => setPlaylists(requestBody))
