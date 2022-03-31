@@ -4,6 +4,7 @@ import de.neuefische.app.playlist.PlaylistData;
 import de.neuefische.app.playlist.PlaylistImage;
 import de.neuefische.app.playlist.PlaylistService;
 import de.neuefische.app.playlist.PlaylistTrack;
+import de.neuefische.app.security.JwtService;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsResponse;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistResponse;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsItems;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -33,14 +35,16 @@ public class SpotifyApiController {
     private final String spotifyAuthSecret;
     private final UserService userService;
     private final PlaylistService playlistService;
+    private final JwtService jwtService;
 
     public SpotifyApiController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId, @Value("${spotify.client.secret}") String spotifyAuthSecret,
-                                UserService userService,PlaylistService playlistService) {
+                                UserService userService,PlaylistService playlistService, JwtService jwtService) {
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.userService = userService;
         this.playlistService= playlistService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
@@ -61,8 +65,7 @@ public class SpotifyApiController {
         UserDocument user= saveSpotifyUser(accessTokenResponse);
         getSpotifyUserPlaylists(accessTokenResponse, user);
 
-        model.addAttribute("jwt", user.getSpotifyId());
-                //jwtUtils.createToken(new HashMap<>(), userResponse.getBody().id()));
+        model.addAttribute("jwt", jwtService.createToken(new HashMap<>(), user.getSpotifyId()));
 
         return "oauth-landing";
     }
