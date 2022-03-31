@@ -11,17 +11,18 @@ import de.neuefische.app.user.UserDocument;
 import de.neuefische.app.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/callback")
 public class SpotifyApiController {
 
@@ -43,7 +44,7 @@ public class SpotifyApiController {
     }
 
     @GetMapping
-    public void callbackUrl(@RequestParam String code)  {
+    public String callbackUrl(@RequestParam String code, Model model)  {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", code);
@@ -59,6 +60,11 @@ public class SpotifyApiController {
 
         UserDocument user= saveSpotifyUser(accessTokenResponse);
         getSpotifyUserPlaylists(accessTokenResponse, user);
+
+        model.addAttribute("jwt", user.getSpotifyId());
+                //jwtUtils.createToken(new HashMap<>(), userResponse.getBody().id()));
+
+        return "oauth-landing";
     }
 
     private void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse, UserDocument user) {
