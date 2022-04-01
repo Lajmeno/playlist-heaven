@@ -3,7 +3,7 @@ interface PlaylistArtist{
     name : string
 }
 
-interface PlaylistTrack{
+export interface PlaylistTrack{
     title: string,
     artists : Array<PlaylistArtist>,
     album: string,
@@ -17,6 +17,7 @@ interface PlaylistImage{
 export interface PlaylistsResponse{
     name : string,
     tracks : Array<PlaylistTrack>,
-    images : Array<PlaylistImage>
+    images : Array<PlaylistImage>,
+    spotifyId: string
 
 }
