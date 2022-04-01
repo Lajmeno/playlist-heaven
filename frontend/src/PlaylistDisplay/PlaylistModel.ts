@@ -3,7 +3,7 @@ interface PlaylistArtist{
     name : string
 }
 
-interface PlaylistTrack{
+export interface PlaylistTrack{
     title: string,
     artists : Array<PlaylistArtist>,
     album: string,

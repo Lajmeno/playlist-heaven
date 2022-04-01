@@ -12,7 +12,6 @@ import java.util.List;
 @Document("playlists")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class PlaylistData {
 

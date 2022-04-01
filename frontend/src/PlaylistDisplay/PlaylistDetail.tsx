@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
-import { PlaylistsResponse } from "./PlaylistModel";
+import { isPropertySignature } from "typescript";
+import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
+import TrackItem from "./TrackItem";
 
 
 export default function PlaylistDetail(){
@@ -8,6 +10,8 @@ export default function PlaylistDetail(){
     const params = useParams();
 
     const [playlist, setPlaylist] = useState({} as PlaylistsResponse);
+
+    const[readyToRender, setReadyToRender] = useState("");
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -23,7 +27,7 @@ export default function PlaylistDetail(){
             }
             throw new Error("There is no ToDo with the requested id");
          })
-        .then(responseBody => setPlaylist(responseBody))
+        .then(responseBody => {setPlaylist(responseBody); setReadyToRender("yes");})
         .catch((e:Error) => {setErrorMessage(e.message)})
 
     }, [params.id]);
@@ -33,6 +37,13 @@ export default function PlaylistDetail(){
             {errorMessage && <div>{errorMessage}</div>}
             <div>Playlist Details here</div>
             <div>{playlist.name}</div>
+            <div>{readyToRender 
+            && <div> {playlist
+                .tracks
+                .map((item : PlaylistTrack) => <div><TrackItem title={item.title} artists={item.artists}
+                 album={item.album} albumReleaseDate={item.albumReleaseDate} /></div>)}
+            </div>}
+            </div>
         </div>
     )
 }

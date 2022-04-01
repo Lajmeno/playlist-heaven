@@ -25,7 +25,7 @@ export default function PlaylistOverview() {
         <div>
             <h2>Your Playlists</h2>
             {playlists
-            .map(item => <PlaylistItem name={item.name} images={item.images} spotifyId={item.spotifyId}/>)}
+            .map(item => <PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/>)}
         </div>
     )
 }
