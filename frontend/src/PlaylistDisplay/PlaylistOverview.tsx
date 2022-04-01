@@ -10,7 +10,7 @@ export default function PlaylistOverview() {
     const [playlists, setPlaylists] = useState([] as Array<PlaylistsResponse>)
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/playlists', {
+        fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
             method: 'GET',
             headers:{
                 "Authorization": `Bearer ${localStorage.getItem("jwt")}`
@@ -25,7 +25,7 @@ export default function PlaylistOverview() {
         <div>
             <h2>Your Playlists</h2>
             {playlists
-            .map(item => <PlaylistItem name={item.name} images={item.images}/>)}
+            .map(item => <PlaylistItem name={item.name} images={item.images} spotifyId={item.spotifyId}/>)}
         </div>
     )
 }

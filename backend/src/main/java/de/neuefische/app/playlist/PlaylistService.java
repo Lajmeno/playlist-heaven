@@ -24,4 +24,8 @@ public class PlaylistService {
     public List<PlaylistData> getPlaylists() {
         return playlistRepository.findAll();
     }
+
+    public Optional<PlaylistData> getPlaylistById(String id) {
+        return playlistRepository.findBySpotifyId(id);
+    }
 }
