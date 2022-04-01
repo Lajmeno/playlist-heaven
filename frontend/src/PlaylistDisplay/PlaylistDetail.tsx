@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
-import { isPropertySignature } from "typescript";
 import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
 import TrackItem from "./TrackItem";
 

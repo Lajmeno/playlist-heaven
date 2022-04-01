@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+
 
 interface DisplayArtist {
     name: string
@@ -29,7 +29,6 @@ export default function TrackItem(props:TrackItemProps){
     }
     
     
-
     return(
         <div>{props.title} || {displayArtistsNames(props.artists)}  || {props.album} || {props.albumReleaseDate}</div>
     );

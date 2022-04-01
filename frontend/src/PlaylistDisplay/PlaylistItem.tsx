@@ -13,8 +13,7 @@ interface PlaylistItemProps{
 export default function PlaylistItem(props:PlaylistItemProps) {
 
     return(
-        <div>
-            
+        <div>   
             <div>
                 <Link to={`${props.spotifyId}`}>
                 <img src={props.images[1].url} alt=""></img>
