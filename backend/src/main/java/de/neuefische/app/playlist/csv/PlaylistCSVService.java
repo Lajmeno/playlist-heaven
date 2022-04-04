@@ -5,7 +5,6 @@ import com.opencsv.CSVWriter;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import de.neuefische.app.playlist.dto.PlaylistTrackDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ public class PlaylistCSVService {
 
     public void writeToCSV(Writer writer, List<PlaylistCSVTrack> trackList){
         try {
-
             ColumnPositionMappingStrategy mappingStrategy= new ColumnPositionMappingStrategy();
             mappingStrategy.setType(PlaylistCSVTrack.class);
 
