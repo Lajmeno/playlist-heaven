@@ -1,9 +1,9 @@
 package de.neuefische.app.spotify;
 
-import de.neuefische.app.playlist.PlaylistData;
-import de.neuefische.app.playlist.PlaylistImage;
+import de.neuefische.app.playlist.data.PlaylistData;
+import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.PlaylistService;
-import de.neuefische.app.playlist.PlaylistTrack;
+import de.neuefische.app.playlist.data.PlaylistTrack;
 import de.neuefische.app.security.JwtService;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsResponse;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistResponse;

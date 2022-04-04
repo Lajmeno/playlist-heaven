@@ -31,9 +31,34 @@ export default function PlaylistDetail(){
 
     }, [params.id]);
 
+    const downloadCSV = () => {
+        fetch(`${process.env.REACT_APP_BASE_URL}/api/csv`, {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer"+ localStorage.getItem("jwt")
+            },
+            body: JSON.stringify(playlist)
+        })
+        .then(resp => resp.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = `${playlist.name}_${playlist.spotifyId}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            alert("Your Playlist has been downloaded!");
+        }) 
+    }
+
+
     return(
         <div>
             {errorMessage && <div>{errorMessage}</div>}
+            <button onClick={() => downloadCSV()}>Download Playlist</button>
             <div>Playlist Details here</div>
             <div>{playlist.name}</div>
             <div>{readyToRender 

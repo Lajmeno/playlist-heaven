@@ -1,6 +1,6 @@
 package de.neuefische.app.playlist;
 
-import de.neuefische.app.playlist.dto.PlaylistDTO;
+import de.neuefische.app.playlist.data.PlaylistData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package de.neuefische.app.playlist.dto;
 
-import de.neuefische.app.playlist.PlaylistData;
+import de.neuefische.app.playlist.data.PlaylistData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
