@@ -16,20 +16,23 @@ import java.util.List;
 @AllArgsConstructor
 public class PlaylistCSVService {
 
-    public void writeToCSV(Writer writer, List<PlaylistTrackDTO> trackList){
+    public void writeToCSV(Writer writer, List<PlaylistCSVTrack> trackList){
         try {
-            List<PlaylistCSVTrack> csvTracks = trackList.stream().map(track -> PlaylistCSVTrack.of(track)).toList();
+
             ColumnPositionMappingStrategy mappingStrategy= new ColumnPositionMappingStrategy();
             mappingStrategy.setType(PlaylistCSVTrack.class);
-
 
             String[] columns = new String[]{ "title", "artists", "album", "albumReleaseDate" };
             mappingStrategy.setColumnMapping(columns);
 
             StatefulBeanToCsvBuilder<PlaylistCSVTrack> builder= new StatefulBeanToCsvBuilder(writer);
-            StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).withQuotechar(CSVWriter.NO_QUOTE_CHARACTER).withSeparator(';').build();
+            StatefulBeanToCsv beanWriter = builder
+                    .withMappingStrategy(mappingStrategy)
+                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                    .withSeparator(';')
+                    .build();
 
-            beanWriter.write(csvTracks);
+            beanWriter.write(trackList);
         }
         catch (Exception e) {
             e.printStackTrace();

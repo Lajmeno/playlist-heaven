@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 
 @Controller
@@ -22,7 +23,8 @@ public class CSVController {
     public void downloadAsCSV(@RequestBody PlaylistDTO playlist , HttpServletResponse servletResponse) throws IOException{
         servletResponse.setContentType("text/csv");
         servletResponse.addHeader("Content-Disposition","attachment; filename=\"Playlist.csv\"");
-        playlistCSVService.writeToCSV(servletResponse.getWriter(),playlist.getTracks());
+        List<PlaylistCSVTrack> tracks = playlist.getTracks().stream().map(track -> PlaylistCSVTrack.of(track)).toList();
+        playlistCSVService.writeToCSV(servletResponse.getWriter(), tracks);
     }
 
 }
