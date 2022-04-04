@@ -1,13 +1,15 @@
 package de.neuefische.app.playlist.dto;
 
-import de.neuefische.app.playlist.PlaylistTrack;
+import de.neuefische.app.playlist.data.PlaylistTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PlaylistTrackDTO {
     private String title;
     private List<PlaylistTrackArtistDTO> artists;

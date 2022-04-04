@@ -1,5 +1,6 @@
 package de.neuefische.app.playlist;
 
+import de.neuefische.app.playlist.data.PlaylistData;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

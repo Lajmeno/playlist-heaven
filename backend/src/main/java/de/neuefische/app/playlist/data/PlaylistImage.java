@@ -1,4 +1,4 @@
-package de.neuefische.app.playlist;
+package de.neuefische.app.playlist.data;
 
 import de.neuefische.app.spotify.playlistresponse.SpotifyPlaylistImages;
 import lombok.AllArgsConstructor;

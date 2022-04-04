@@ -1,4 +1,4 @@
-package de.neuefische.app.playlist;
+package de.neuefische.app.playlist.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

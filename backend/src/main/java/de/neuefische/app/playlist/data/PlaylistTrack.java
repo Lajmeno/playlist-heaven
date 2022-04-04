@@ -1,13 +1,15 @@
-package de.neuefische.app.playlist;
+package de.neuefische.app.playlist.data;
 
 import de.neuefische.app.spotify.playlistresponse.SpotifyPlaylistTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PlaylistTrack {
 
     private String title;

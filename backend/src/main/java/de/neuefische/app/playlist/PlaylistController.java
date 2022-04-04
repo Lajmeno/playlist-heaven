@@ -1,4 +1,4 @@
-package de.neuefische.app;
+package de.neuefische.app.playlist;
 
 import de.neuefische.app.playlist.PlaylistService;
 import de.neuefische.app.playlist.dto.PlaylistDTO;
