@@ -42,43 +42,23 @@ export default function PlaylistDetail(){
         })
         .then(resp => resp.blob())
         .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        // the filename you want
-        a.download = `${playlist.name}_${playlist.spotifyId}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        alert("your file has downloaded!")}) // or you know, something with better UX...
-    }
-
-    const downloadCSV_2 = () => {
-        fetch(`${process.env.REACT_APP_BASE_URL}/api/csv/download`, {
-            method: "GET",
-            headers:{
-                "Authorization": "Bearer"+ localStorage.getItem("jwt")
-            }
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = `${playlist.name}_${playlist.spotifyId}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            alert("Your Playlist has been downloaded!");
         }) 
     }
 
-    const downloadCSV_3 = () => {
-        fetch(`${process.env.REACT_APP_BASE_URL}/api/csv`, {
-            method: "GET",
-            headers:{
-                "Authorization": "Bearer"+ localStorage.getItem("jwt")
-            }
-        }) 
-
-    }
 
     return(
         <div>
             {errorMessage && <div>{errorMessage}</div>}
             <button onClick={() => downloadCSV()}>Download Playlist</button>
-            <button onClick={() => downloadCSV_3()}>getPlaylistAsCSV</button>
-            <button onClick={() => downloadCSV_2()}>download</button>
             <div>Playlist Details here</div>
             <div>{playlist.name}</div>
             <div>{readyToRender 

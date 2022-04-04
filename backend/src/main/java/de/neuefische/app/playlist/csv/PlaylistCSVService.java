@@ -18,17 +18,18 @@ public class PlaylistCSVService {
 
     public void writeToCSV(Writer writer, List<PlaylistTrackDTO> trackList){
         try {
+            List<PlaylistCSVTrack> csvTracks = trackList.stream().map(track -> PlaylistCSVTrack.of(track)).toList();
             ColumnPositionMappingStrategy mappingStrategy= new ColumnPositionMappingStrategy();
-            mappingStrategy.setType(PlaylistTrackDTO.class);
+            mappingStrategy.setType(PlaylistCSVTrack.class);
 
 
             String[] columns = new String[]{ "title", "artists", "album", "albumReleaseDate" };
             mappingStrategy.setColumnMapping(columns);
 
-            StatefulBeanToCsvBuilder<PlaylistTrackDTO> builder= new StatefulBeanToCsvBuilder(writer);
+            StatefulBeanToCsvBuilder<PlaylistCSVTrack> builder= new StatefulBeanToCsvBuilder(writer);
             StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).withQuotechar(CSVWriter.NO_QUOTE_CHARACTER).withSeparator(';').build();
 
-            beanWriter.write(trackList);
+            beanWriter.write(csvTracks);
         }
         catch (Exception e) {
             e.printStackTrace();
