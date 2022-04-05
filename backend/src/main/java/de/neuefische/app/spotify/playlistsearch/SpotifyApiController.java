@@ -2,7 +2,7 @@ package de.neuefische.app.spotify.playlistsearch;
 
 
 import de.neuefische.app.playlist.dto.PlaylistDTO;
-import de.neuefische.app.spotify.SpotifyGetAccessTokenResponse;
+import de.neuefische.app.spotify.SpotifyGetAccessTokenBody;
 import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -44,23 +44,23 @@ public class SpotifyApiController {
         map.add("refresh_token", refreshToken.getRefreshToken());
         HttpHeaders headers = createGetTokenHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<SpotifyGetAccessTokenResponse> accessTokenResponse = restTemplate.exchange(
+        ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = restTemplate.exchange(
                 "https://accounts.spotify.com/api/token",
                 HttpMethod.POST,
                 request,
-                SpotifyGetAccessTokenResponse.class
+                SpotifyGetAccessTokenBody.class
         );
 
-        SpotifySearchPlaylistResponse result = getSpotifySearchResult(accessTokenResponse, value).getBody();
+        SpotifySearchPlaylistBody result = getSpotifySearchResult(accessTokenResponse, value).getBody();
         return result.playlists().items().stream().map(playlist -> PlaylistDTO.of(playlist)).toList();
     }
 
-    private ResponseEntity<SpotifySearchPlaylistResponse> getSpotifySearchResult(ResponseEntity<SpotifyGetAccessTokenResponse> accessTokenResponse, String searchValue){
-        ResponseEntity<SpotifySearchPlaylistResponse> userPlaylistsResponse = restTemplate.exchange(
+    private ResponseEntity<SpotifySearchPlaylistBody> getSpotifySearchResult(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, String searchValue){
+        ResponseEntity<SpotifySearchPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/search?q=" + searchValue +"&type=playlist&limit=20",
                 HttpMethod.GET,
                 new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                SpotifySearchPlaylistResponse.class
+                SpotifySearchPlaylistBody.class
         );
         return userPlaylistsResponse;
 

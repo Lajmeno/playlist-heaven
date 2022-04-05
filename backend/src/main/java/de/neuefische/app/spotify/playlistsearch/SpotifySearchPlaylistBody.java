@@ -2,7 +2,7 @@ package de.neuefische.app.spotify.playlistsearch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record SpotifySearchPlaylistResponse(
-        @JsonProperty("playlists") SpotifySearchPlaylistResult playlists
+public record SpotifySearchPlaylistBody(
+        @JsonProperty("playlists") SpotifySearchPlaylistItems playlists
 ) {
 }
