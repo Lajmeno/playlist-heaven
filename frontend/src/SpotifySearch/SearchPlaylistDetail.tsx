@@ -60,11 +60,11 @@ export default function SearchPlaylistDetail(){
             && <div>
             <button onClick={() => addToCollectio()}>Add to Collection</button>
             <h3>{playlist.name}</h3>
-            <div> {playlist
+            {playlist
                 .tracks
                 .map((item : PlaylistTrack) => <div><TrackItem title={item.title} artists={item.artists}
                  album={item.album} albumReleaseDate={item.albumReleaseDate} /></div>)}
-            </div></div>}
+            </div>}
             </div>
         </div>
     );
