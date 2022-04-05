@@ -8,6 +8,7 @@ import de.neuefische.app.security.JwtService;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsResponse;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistResponse;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsItems;
+import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
 import de.neuefische.app.user.UserDocument;
 import de.neuefische.app.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/callback")
-public class SpotifyApiController {
+public class SpotifyCallbackController {
 
     private static final String ACCESS_TOKEN_URL = "https://accounts.spotify.com/api/token";
 
@@ -36,15 +37,18 @@ public class SpotifyApiController {
     private final UserService userService;
     private final PlaylistService playlistService;
     private final JwtService jwtService;
+    private final SpotifyRefreshToken refreshToken;
 
-    public SpotifyApiController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId, @Value("${spotify.client.secret}") String spotifyAuthSecret,
-                                UserService userService,PlaylistService playlistService, JwtService jwtService) {
+    public SpotifyCallbackController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId,
+                                     @Value("${spotify.client.secret}") String spotifyAuthSecret, UserService userService,
+                                     PlaylistService playlistService, JwtService jwtService, SpotifyRefreshToken refreshToken) {
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.userService = userService;
         this.playlistService= playlistService;
         this.jwtService = jwtService;
+        this.refreshToken = refreshToken;
     }
 
     @GetMapping
@@ -55,13 +59,13 @@ public class SpotifyApiController {
         map.add("redirect_uri", "http://localhost:8080/api/callback");
         HttpHeaders headers = createGetTokenHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse = restTemplate.exchange(
+        ResponseEntity<SpotifyGetAccessTokenResponse> accessTokenResponse = restTemplate.exchange(
                 ACCESS_TOKEN_URL,
                 HttpMethod.POST,
                 request,
-                SpotifyGetAccesTokenResponse.class
+                SpotifyGetAccessTokenResponse.class
         );
-
+        refreshToken.setRefreshToken(accessTokenResponse.getBody().refreshToken());
         UserDocument user= saveSpotifyUser(accessTokenResponse);
         getSpotifyUserPlaylists(accessTokenResponse, user);
 
@@ -70,7 +74,7 @@ public class SpotifyApiController {
         return "oauth-landing";
     }
 
-    private void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse, UserDocument user) {
+    private void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenResponse> accessTokenResponse, UserDocument user) {
         ResponseEntity<SpotifyGetAllUserPlaylistsResponse> userPlaylistsResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/me/playlists?limit=2&offset=20",
                 HttpMethod.GET,
@@ -99,7 +103,7 @@ public class SpotifyApiController {
             return header;
     }
 
-    private UserDocument saveSpotifyUser(ResponseEntity<SpotifyGetAccesTokenResponse> accessTokenResponse){
+    private UserDocument saveSpotifyUser(ResponseEntity<SpotifyGetAccessTokenResponse> accessTokenResponse){
         ResponseEntity<SpotifyUser> userResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/me",
                 HttpMethod.GET,
