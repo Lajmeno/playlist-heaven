@@ -20,6 +20,6 @@ public class PlaylistData {
     private String spotifyId;
     private List<PlaylistTrack> tracks;
     private List<PlaylistImage> images;
-    private String SpotifyUserId;
+    private String spotifyUserId;
 
 }

@@ -21,8 +21,8 @@ public class PlaylistService {
         return Optional.empty();
     }
 
-    public List<PlaylistData> getPlaylists() {
-        return playlistRepository.findAll();
+    public List<PlaylistData> getUserPlaylists(String spotifyUserId) {
+        return playlistRepository.findBySpotifyUserId(spotifyUserId);
     }
 
     public Optional<PlaylistData> getPlaylistById(String id) {

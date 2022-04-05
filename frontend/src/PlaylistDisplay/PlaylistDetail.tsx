@@ -19,15 +19,14 @@ export default function PlaylistDetail(){
             headers:{
                 "Authorization": "Bearer"+ localStorage.getItem("jwt")
             }})
-        .then(response => {return response.json()})
-        .then(responseBody  => {
-            if(responseBody){
-                return responseBody;   
+        .then(response => {
+            if(!(response.status === 404)){
+                return response.json()
             }
             throw new Error("There is no Playlist with the requested id");
-         })
+        })
         .then(responseBody => {setPlaylist(responseBody); setReadyToRender("yes");})
-        .catch((e:Error) => {setErrorMessage(e.message)})
+        .catch((e) => {setErrorMessage(e.message)})
 
     }, [params.id]);
 
@@ -57,16 +56,18 @@ export default function PlaylistDetail(){
 
     return(
         <div>
+            
             {errorMessage && <div>{errorMessage}</div>}
-            <button onClick={() => downloadCSV()}>Download Playlist</button>
-            <div>Playlist Details here</div>
-            <div>{playlist.name}</div>
+            
             <div>{readyToRender 
-            && <div> {playlist
+            && <div>
+            <button onClick={() => downloadCSV()}>Download Playlist</button>
+            <h3>{playlist.name}</h3>
+            <div> {playlist
                 .tracks
                 .map((item : PlaylistTrack) => <div><TrackItem title={item.title} artists={item.artists}
                  album={item.album} albumReleaseDate={item.albumReleaseDate} /></div>)}
-            </div>}
+            </div></div>}
             </div>
         </div>
     )

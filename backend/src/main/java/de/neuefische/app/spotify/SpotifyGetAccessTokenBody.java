@@ -2,7 +2,7 @@ package de.neuefische.app.spotify;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record SpotifyGetAccessTokenResponse(
+public record SpotifyGetAccessTokenBody(
         @JsonProperty("access_token") String accessToken,
         @JsonProperty("token_type") String tokenType,
         @JsonProperty("scope") String scope,
