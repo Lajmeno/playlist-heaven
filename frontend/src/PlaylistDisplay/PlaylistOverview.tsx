@@ -14,8 +14,7 @@ export default function PlaylistOverview() {
             method: 'GET',
             headers:{
                 "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-            }
-            
+            } 
         })
         .then(request => request.json())
         .then(requestBody => setPlaylists(requestBody))
@@ -24,7 +23,8 @@ export default function PlaylistOverview() {
     return(
         <div>
             <h2>Your Playlists</h2>
-            {playlists
+            {playlists.length > 1 && 
+            playlists
             .map(item => <PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/>)}
         </div>
     )

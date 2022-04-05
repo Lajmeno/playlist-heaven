@@ -16,7 +16,7 @@ export default function PlaylistItem(props:PlaylistItemProps) {
         <div>   
             <div>
                 <Link to={`${props.spotifyId}`}>
-                <img src={props.images[1].url} alt=""></img>
+                <img src={props.images.length > 1 ? props.images[1].url : props.images[0].url} alt=""></img>
                 </Link>
                 </div>
                 <h3>{props.name}</h3>

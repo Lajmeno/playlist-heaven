@@ -24,7 +24,7 @@ export default function PlaylistDetail(){
             if(responseBody){
                 return responseBody;   
             }
-            throw new Error("There is no ToDo with the requested id");
+            throw new Error("There is no Playlist with the requested id");
          })
         .then(responseBody => {setPlaylist(responseBody); setReadyToRender("yes");})
         .catch((e:Error) => {setErrorMessage(e.message)})
