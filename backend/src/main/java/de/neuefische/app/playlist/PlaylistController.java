@@ -1,11 +1,11 @@
 package de.neuefische.app.playlist;
 
-import de.neuefische.app.playlist.PlaylistService;
 import de.neuefische.app.playlist.dto.PlaylistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,8 +17,11 @@ public class PlaylistController {
     private final PlaylistService playlistService;
 
     @GetMapping
-    public List<PlaylistDTO> getUserPlaylists(){
-        return playlistService.getPlaylists().stream().map(playlist -> PlaylistDTO.of(playlist)).toList();
+    public List<PlaylistDTO> getUserPlaylists(Principal principal){
+        return playlistService.getUserPlaylists(principal.getName())
+                .stream()
+                .map(playlist -> PlaylistDTO.of(playlist))
+                .toList();
     }
 
     @GetMapping("/{id}")
