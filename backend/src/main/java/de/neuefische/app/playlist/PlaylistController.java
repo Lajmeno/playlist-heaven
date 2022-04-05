@@ -37,7 +37,7 @@ public class PlaylistController {
     public ResponseEntity savePlaylistForUser(@RequestBody PlaylistDTO playlist, Principal principal){
         PlaylistData playlistData = PlaylistData.of(playlist);
         playlistData.setSpotifyUserId(principal.getName());
-        if(playlistService.savePlaylist(playlistData).equals(Optional.empty())){
+        if(playlistService.savePlaylist(playlistData).isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();

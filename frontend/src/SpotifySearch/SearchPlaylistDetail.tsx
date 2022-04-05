@@ -26,7 +26,11 @@ export default function SearchPlaylistDetail(){
             }
             throw new Error("There is no Playlist with the requested id");
         })
-        .then(responseBody => {setPlaylist(responseBody); setReadyToRender(true); setErrorMessage("")})
+        .then(responseBody => {
+            setPlaylist(responseBody); 
+            setReadyToRender(true); 
+            setErrorMessage("");
+        })
         .catch((e) => {setErrorMessage(e.message)})
 
     }, [params.id]);

@@ -25,7 +25,10 @@ export default function PlaylistDetail(){
             }
             throw new Error("There is no Playlist with the requested id");
         })
-        .then(responseBody => {setPlaylist(responseBody); setReadyToRender(true);})
+        .then(responseBody => {
+            setPlaylist(responseBody); 
+            setReadyToRender(true);
+        })
         .catch((e) => {setErrorMessage(e.message)})
 
     }, [params.id]);
