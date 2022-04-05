@@ -1,12 +1,15 @@
 package de.neuefische.app.playlist;
 
+import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.dto.PlaylistDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/playlists")
@@ -29,5 +32,17 @@ public class PlaylistController {
         return ResponseEntity.of(playlistService.getPlaylistById(id)
                         .map(playlistData -> PlaylistDTO.of(playlistData)));
     }
+
+    @PostMapping
+    public ResponseEntity savePlaylistForUser(@RequestBody PlaylistDTO playlist, Principal principal){
+        PlaylistData playlistData = PlaylistData.of(playlist);
+        playlistData.setSpotifyUserId(principal.getName());
+        if(playlistService.savePlaylist(playlistData).isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+
 
 }

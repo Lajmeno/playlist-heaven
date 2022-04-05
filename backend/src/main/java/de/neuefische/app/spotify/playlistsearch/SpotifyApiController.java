@@ -8,6 +8,8 @@ import de.neuefische.app.playlist.dto.PlaylistDTO;
 import de.neuefische.app.spotify.SpotifyGetAccessTokenBody;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistBody;
 import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,6 +26,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/spotify")
 public class SpotifyApiController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyApiController.class);
 
     private final RestTemplate restTemplate;
     private final String spotifyClientId;
@@ -54,10 +58,9 @@ public class SpotifyApiController {
             List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
             List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
             PlaylistData playlistData = new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
-            return ResponseEntity.of(Optional.of(PlaylistDTO.of(playlistData)));
-
+            return ResponseEntity.ok().body(PlaylistDTO.of(playlistData));
         }catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.info("Playlist could not be found", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

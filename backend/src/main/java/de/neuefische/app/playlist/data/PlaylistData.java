@@ -1,5 +1,8 @@
 package de.neuefische.app.playlist.data;
 
+import de.neuefische.app.playlist.dto.PlaylistDTO;
+import de.neuefische.app.playlist.dto.PlaylistImageDTO;
+import de.neuefische.app.playlist.dto.PlaylistTrackDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +24,12 @@ public class PlaylistData {
     private List<PlaylistTrack> tracks;
     private List<PlaylistImage> images;
     private String spotifyUserId;
+
+    public static PlaylistData of(PlaylistDTO playlistDTO){
+        List<PlaylistTrack> tracks = playlistDTO.getTracks().stream().map(track -> PlaylistTrack.of(track)).toList();
+        List<PlaylistImage> images = playlistDTO.getImages().stream().map(image -> PlaylistImage.of(image)).toList();
+        return new PlaylistData(null, playlistDTO.getName(), playlistDTO.getSpotifyId(), tracks, images, null);
+
+    }
 
 }

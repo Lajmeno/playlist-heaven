@@ -1,6 +1,7 @@
 package de.neuefische.app.playlist.data;
 
-import de.neuefische.app.spotify.playlistresponse.SpotifyTracksArtists;
+import de.neuefische.app.playlist.dto.PlaylistTrackArtistDTO;
+import de.neuefische.app.spotify.playlistresponse.SpotifyTracksArtist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,7 +10,11 @@ import lombok.Data;
 public class PlaylistTrackArtist {
     private String name;
 
-    public static PlaylistTrackArtist of(SpotifyTracksArtists artists){
-        return new PlaylistTrackArtist(artists.name());
+    public static PlaylistTrackArtist of(SpotifyTracksArtist artist){
+        return new PlaylistTrackArtist(artist.name());
+    }
+
+    public static PlaylistTrackArtist of(PlaylistTrackArtistDTO artist){
+        return new PlaylistTrackArtist(artist.getName());
     }
 }

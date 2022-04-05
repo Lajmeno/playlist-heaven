@@ -26,7 +26,10 @@ export default function SpotifySearch(){
             }
             throw new Error("Nothing found..");
          })
-        .then(responseBody => setPlaylists(responseBody))
+        .then(responseBody => {
+            setPlaylists(responseBody); 
+            setErrorMessage("");
+        })
         .catch((e:Error) => {setErrorMessage(e.message)})
     }
     

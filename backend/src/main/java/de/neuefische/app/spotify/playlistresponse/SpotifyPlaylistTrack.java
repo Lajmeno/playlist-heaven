@@ -8,6 +8,6 @@ public record SpotifyPlaylistTrack(
         @JsonProperty("name") String name,
         @JsonProperty("id") String id,
         @JsonProperty("album") SpotifyTracksAlbum album,
-        @JsonProperty("artists") List<SpotifyTracksArtists> artists
+        @JsonProperty("artists") List<SpotifyTracksArtist> artists
 ) {
 }
