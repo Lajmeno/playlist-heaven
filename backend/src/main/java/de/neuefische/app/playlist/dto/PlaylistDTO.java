@@ -4,12 +4,14 @@ import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PlaylistDTO {
 
     private String name;

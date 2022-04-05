@@ -1,6 +1,6 @@
 import { useState } from "react"
-import PlaylistItem from "./PlaylistItem";
-import { PlaylistsResponse } from "./PlaylistModel";
+import PlaylistItem from "../PlaylistDisplay/PlaylistItem";
+import { PlaylistsResponse } from "../PlaylistDisplay/PlaylistModel";
 
 
 export default function SpotifySearch(){
