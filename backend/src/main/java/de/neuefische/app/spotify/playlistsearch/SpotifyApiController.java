@@ -54,8 +54,7 @@ public class SpotifyApiController {
             List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
             List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
             PlaylistData playlistData = new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
-            return ResponseEntity.of(Optional.of(PlaylistDTO.of(playlistData)));
-
+            return ResponseEntity.ok().body(PlaylistDTO.of(playlistData));
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

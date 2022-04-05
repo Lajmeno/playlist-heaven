@@ -10,7 +10,7 @@ export default function PlaylistDetail(){
 
     const [playlist, setPlaylist] = useState({} as PlaylistsResponse);
 
-    const[readyToRender, setReadyToRender] = useState("");
+    const[readyToRender, setReadyToRender] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -25,7 +25,7 @@ export default function PlaylistDetail(){
             }
             throw new Error("There is no Playlist with the requested id");
         })
-        .then(responseBody => {setPlaylist(responseBody); setReadyToRender("yes");})
+        .then(responseBody => {setPlaylist(responseBody); setReadyToRender(true);})
         .catch((e) => {setErrorMessage(e.message)})
 
     }, [params.id]);

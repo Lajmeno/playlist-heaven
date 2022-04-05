@@ -1,5 +1,6 @@
 package de.neuefische.app.playlist.data;
 
+import de.neuefische.app.playlist.dto.PlaylistTrackDTO;
 import de.neuefische.app.spotify.playlistresponse.SpotifyPlaylistTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,11 @@ public class PlaylistTrack {
     public static PlaylistTrack of(SpotifyPlaylistTrack track){
         List<PlaylistTrackArtist> artists = track.artists().stream().map(t -> PlaylistTrackArtist.of(t)).toList();
         return new PlaylistTrack(track.name(), artists, track.album().name(), track.album().date());
+    }
+
+    public static PlaylistTrack of(PlaylistTrackDTO track){
+        List<PlaylistTrackArtist> artists = track.getArtists().stream().map(t -> PlaylistTrackArtist.of(t)).toList();
+        return new PlaylistTrack(track.getTitle(), artists, track.getAlbum(), track.getAlbumReleaseDate());
     }
 
 }

@@ -11,7 +11,7 @@ export default function SearchPlaylistDetail(){
 
     const [playlist, setPlaylist] = useState({} as PlaylistsResponse);
 
-    const[readyToRender, setReadyToRender] = useState("");
+    const[readyToRender, setReadyToRender] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -26,14 +26,27 @@ export default function SearchPlaylistDetail(){
             }
             throw new Error("There is no Playlist with the requested id");
         })
-        .then(responseBody => {setPlaylist(responseBody); setReadyToRender("yes");})
+        .then(responseBody => {setPlaylist(responseBody); setReadyToRender(true); setErrorMessage("")})
         .catch((e) => {setErrorMessage(e.message)})
 
     }, [params.id]);
 
     const addToCollectio = () => {
-        //here next issue
-        
+        fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer"+ localStorage.getItem("jwt")
+            },
+            body: JSON.stringify(playlist)
+        })
+        .then(response => {
+            if((response.status === 400)){
+                throw new Error("Playlist already exists in Collection");
+            }
+            setErrorMessage("");
+        })
+        .catch((e) => {setErrorMessage(e.message)})
     }
 
 
