@@ -43,21 +43,23 @@ public class SpotifyApiController {
     public ResponseEntity<PlaylistDTO> getPlaylistFromSpotify(@PathVariable String id){
         ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
 
-        ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsTracksResponse = restTemplate.exchange(
-                "https://api.spotify.com/v1/playlists/"+id,
-                HttpMethod.GET,
-                new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                SpotifyGetPlaylistBody.class
-        );
-
-        if(userPlaylistsTracksResponse.getStatusCode().value() == 200){
+        try {
+            ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsTracksResponse = restTemplate.exchange(
+                    "https://api.spotify.com/v1/playlists/" + id,
+                    HttpMethod.GET,
+                    new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
+                    SpotifyGetPlaylistBody.class
+            );
             SpotifyGetPlaylistBody responseBody = userPlaylistsTracksResponse.getBody();
             List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
             List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
             PlaylistData playlistData = new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
             return ResponseEntity.of(Optional.of(PlaylistDTO.of(playlistData)));
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @GetMapping("/search/{value}")
