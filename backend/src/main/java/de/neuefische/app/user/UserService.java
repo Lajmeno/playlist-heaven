@@ -12,7 +12,11 @@ public class UserService {
     private final UserRepo userRepo;
 
     public UserDocument saveUser(UserDocument user) {
-        return userRepo.save(user);
+        Optional<UserDocument> userInRepo = userRepo.findBySpotifyId(user.getSpotifyId());
+        if(userInRepo.isEmpty()) {
+            return userRepo.save(user);
+        }
+        return userInRepo.get();
     }
 
     public Optional<UserDocument> getUser(String spotifyId){

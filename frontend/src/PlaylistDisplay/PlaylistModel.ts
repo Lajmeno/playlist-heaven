@@ -7,7 +7,8 @@ export interface PlaylistTrack{
     title: string,
     artists : Array<PlaylistArtist>,
     album: string,
-    albumReleaseDate : string
+    albumReleaseDate : string,
+    spotifyUri: string
 }
 
 interface PlaylistImage{

@@ -17,16 +17,17 @@ public class PlaylistTrack {
     private List<PlaylistTrackArtist> artists;
     private String album;
     private String albumReleaseDate;
+    private String spotifyUri;
 
 
     public static PlaylistTrack of(SpotifyPlaylistTrack track){
         List<PlaylistTrackArtist> artists = track.artists().stream().map(t -> PlaylistTrackArtist.of(t)).toList();
-        return new PlaylistTrack(track.name(), artists, track.album().name(), track.album().date());
+        return new PlaylistTrack(track.name(), artists, track.album().name(), track.album().date(), track.uri());
     }
 
     public static PlaylistTrack of(PlaylistTrackDTO track){
         List<PlaylistTrackArtist> artists = track.getArtists().stream().map(t -> PlaylistTrackArtist.of(t)).toList();
-        return new PlaylistTrack(track.getTitle(), artists, track.getAlbum(), track.getAlbumReleaseDate());
+        return new PlaylistTrack(track.getTitle(), artists, track.getAlbum(), track.getAlbumReleaseDate(), track.getSpotifyUri() );
     }
 
 }

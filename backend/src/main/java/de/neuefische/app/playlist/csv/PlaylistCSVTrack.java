@@ -1,15 +1,10 @@
 package de.neuefische.app.playlist.csv;
 
-import de.neuefische.app.playlist.data.PlaylistTrack;
-import de.neuefische.app.playlist.data.PlaylistTrackArtist;
 import de.neuefische.app.playlist.dto.PlaylistTrackArtistDTO;
 import de.neuefische.app.playlist.dto.PlaylistTrackDTO;
-import de.neuefische.app.spotify.playlistresponse.SpotifyPlaylistTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +15,7 @@ public class PlaylistCSVTrack {
     private String artists;
     private String album;
     private String albumReleaseDate;
+    private String spotifyUri;
 
 
     public static PlaylistCSVTrack of(PlaylistTrackDTO track){
@@ -33,7 +29,7 @@ public class PlaylistCSVTrack {
                 artistNames += artist.getName();
             }
         }
-        return new PlaylistCSVTrack(track.getTitle(), artistNames, track.getAlbum(), track.getAlbumReleaseDate());
+        return new PlaylistCSVTrack(track.getTitle(), artistNames, track.getAlbum(), track.getAlbumReleaseDate(), track.getSpotifyUri());
     }
 
 }

@@ -15,9 +15,10 @@ public class PlaylistTrackDTO {
     private List<PlaylistTrackArtistDTO> artists;
     private String album;
     private String albumReleaseDate;
+    private String spotifyUri;
 
     public static PlaylistTrackDTO of(PlaylistTrack track){
         List<PlaylistTrackArtistDTO> artists = track.getArtists().stream().map(a -> PlaylistTrackArtistDTO.of(a)).toList();
-        return new PlaylistTrackDTO(track.getTitle(), artists, track.getAlbum(), track.getAlbumReleaseDate());
+        return new PlaylistTrackDTO(track.getTitle(), artists, track.getAlbum(), track.getAlbumReleaseDate(), track.getSpotifyUri());
     }
 }
