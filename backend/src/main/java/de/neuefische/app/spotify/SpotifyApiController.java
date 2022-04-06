@@ -1,27 +1,27 @@
-package de.neuefische.app.spotify.playlistsearch;
+package de.neuefische.app.spotify;
 
 
+import de.neuefische.app.playlist.csv.ImportStatus;
+import de.neuefische.app.playlist.csv.PlaylistCSVService;
 import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.data.PlaylistTrack;
 import de.neuefische.app.playlist.dto.PlaylistDTO;
-import de.neuefische.app.spotify.SpotifyGetAccessTokenBody;
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistBody;
 import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
+import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylistBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/spotify")
@@ -33,14 +33,27 @@ public class SpotifyApiController {
     private final String spotifyClientId;
     private final String spotifyAuthSecret;
     private final SpotifyRefreshToken refreshToken;
+    private final PlaylistCSVService playlistCSVService;
 
     public SpotifyApiController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId,
-                                     @Value("${spotify.client.secret}") String spotifyAuthSecret,
-                                SpotifyRefreshToken refreshToken){
+                                @Value("${spotify.client.secret}") String spotifyAuthSecret,
+                                SpotifyRefreshToken refreshToken, PlaylistCSVService playlistCSVService){
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.refreshToken = refreshToken;
+        this.playlistCSVService = playlistCSVService;
+    }
+
+    @PostMapping(value = "/{title}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title) throws IOException {
+        ImportStatus importStatus = playlistCSVService.readCSV(file.getInputStream());
+        if (importStatus == ImportStatus.SUCCESS) {
+            return ResponseEntity.ok().build();
+        } else if (importStatus == ImportStatus.PARTIAL) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/{id}")

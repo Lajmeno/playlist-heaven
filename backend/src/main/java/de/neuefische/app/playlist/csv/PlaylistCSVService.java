@@ -2,13 +2,11 @@ package de.neuefische.app.playlist.csv;
 
 
 import com.opencsv.CSVWriter;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.bean.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 
 @Service
@@ -35,6 +33,29 @@ public class PlaylistCSVService {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public ImportStatus readCSV(InputStream content){
+        //LOGGER.info("user with id {} started CSV import", userId);
+        try (Reader reader = new BufferedReader(new InputStreamReader(content))) {
+            CsvToBean<PlaylistCSVTrack> csvToBean = new CsvToBeanBuilder<PlaylistCSVTrack>(reader)
+                    .withType(PlaylistCSVTrack.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            /*
+            itemRepository.saveAll(csvToBean.parse().stream()
+                    .map(item -> item.toitem(userId))
+                    .toList());
+
+             */
+
+            return ImportStatus.SUCCESS;
+        } catch (IllegalStateException | IllegalArgumentException | IOException e) {
+            //LOGGER.warn("csv could not be imported", e);
+            return ImportStatus.FAILURE;
+        }
+
     }
 
 }

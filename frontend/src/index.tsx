@@ -5,9 +5,10 @@ import App from './App';
 import Login from './Login';
 import PlaylistDetail from './PlaylistDisplay/PlaylistDetail';
 import PlaylistOverview from './PlaylistDisplay/PlaylistOverview';
-import SpotifySearch from './SpotifySearch/SpotifySearch';
+import SpotifySearch from './SpotifyOperations/SpotifySearch';
 import reportWebVitals from './reportWebVitals';
-import SearchPlaylistDetail from './SpotifySearch/SearchPlaylistDetail';
+import SearchPlaylistDetail from './SpotifyOperations/SearchPlaylistDetail';
+import CreateSpotifyPlaylist from './SpotifyOperations/CreateSpotifyPlaylist';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.render(
             <Route path="/overview/:id" element={<PlaylistDetail/>} />
             <Route path="/search" element={<SpotifySearch/>} />
             <Route path="/search/:id" element={<SearchPlaylistDetail/>} />
+            <Route path="/create" element={<CreateSpotifyPlaylist/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
