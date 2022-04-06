@@ -18,7 +18,7 @@ public class PlaylistCSVService {
             ColumnPositionMappingStrategy mappingStrategy= new ColumnPositionMappingStrategy();
             mappingStrategy.setType(PlaylistCSVTrack.class);
 
-            String[] columns = new String[]{ "title", "artists", "album", "albumReleaseDate" };
+            String[] columns = new String[]{ "title", "artists", "album", "albumReleaseDate", "spotifyUri" };
             mappingStrategy.setColumnMapping(columns);
 
             StatefulBeanToCsvBuilder<PlaylistCSVTrack> builder= new StatefulBeanToCsvBuilder(writer);
