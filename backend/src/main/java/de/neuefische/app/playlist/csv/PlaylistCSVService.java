@@ -4,26 +4,25 @@ package de.neuefische.app.playlist.csv;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.*;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
 public class PlaylistCSVService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistCSVService.class);
+
     public void writeToCSV(Writer writer, List<PlaylistCSVTrack> trackList){
         try {
-            ColumnPositionMappingStrategy mappingStrategy= new ColumnPositionMappingStrategy();
-            mappingStrategy.setType(PlaylistCSVTrack.class);
-
-            String[] columns = new String[]{ "title", "artists", "album", "albumReleaseDate", "spotifyUri" };
-            mappingStrategy.setColumnMapping(columns);
-
             StatefulBeanToCsvBuilder<PlaylistCSVTrack> builder= new StatefulBeanToCsvBuilder(writer);
             StatefulBeanToCsv beanWriter = builder
-                    .withMappingStrategy(mappingStrategy)
                     .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
                     .withSeparator(';')
                     .build();
@@ -35,27 +34,25 @@ public class PlaylistCSVService {
         }
     }
 
-    public ImportStatus readCSV(InputStream content){
-        //LOGGER.info("user with id {} started CSV import", userId);
+    public Optional<List<String>> readCSV(InputStream content){
         try (Reader reader = new BufferedReader(new InputStreamReader(content))) {
             CsvToBean<PlaylistCSVTrack> csvToBean = new CsvToBeanBuilder<PlaylistCSVTrack>(reader)
                     .withType(PlaylistCSVTrack.class)
                     .withIgnoreLeadingWhiteSpace(true)
+                    .withSeparator(';')
                     .build();
 
-            /*
-            itemRepository.saveAll(csvToBean.parse().stream()
-                    .map(item -> item.toitem(userId))
-                    .toList());
+            List<String> uris = csvToBean.parse().stream()
+                    .map(item -> item.toPlaylistTrack())
+                    .map(item -> item.getSpotifyUri())
+                    .toList();
 
-             */
+            return Optional.of(uris);
 
-            return ImportStatus.SUCCESS;
         } catch (IllegalStateException | IllegalArgumentException | IOException e) {
-            //LOGGER.warn("csv could not be imported", e);
-            return ImportStatus.FAILURE;
+            LOGGER.info("csv could not be imported", e);
+            return Optional.empty();
         }
-
     }
 
 }

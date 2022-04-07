@@ -21,7 +21,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/spotify")
@@ -34,24 +36,26 @@ public class SpotifyApiController {
     private final String spotifyAuthSecret;
     private final SpotifyRefreshToken refreshToken;
     private final PlaylistCSVService playlistCSVService;
+    private final SpotifyApiService spotifyApiService;
 
     public SpotifyApiController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId,
                                 @Value("${spotify.client.secret}") String spotifyAuthSecret,
-                                SpotifyRefreshToken refreshToken, PlaylistCSVService playlistCSVService){
+                                SpotifyRefreshToken refreshToken, PlaylistCSVService playlistCSVService,
+                                SpotifyApiService spotifyApiService){
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.refreshToken = refreshToken;
         this.playlistCSVService = playlistCSVService;
+        this.spotifyApiService = spotifyApiService;
     }
 
     @PostMapping(value = "/{title}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title) throws IOException {
-        ImportStatus importStatus = playlistCSVService.readCSV(file.getInputStream());
-        if (importStatus == ImportStatus.SUCCESS) {
+    public ResponseEntity<Void> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title, Principal principal) throws IOException {
+        Optional<List<String>> uris = playlistCSVService.readCSV(file.getInputStream());
+        if(uris.isPresent()){
+            spotifyApiService.createNewSpotifyPlaylist(title, uris.get(), principal.getName());
             return ResponseEntity.ok().build();
-        } else if (importStatus == ImportStatus.PARTIAL) {
-            return ResponseEntity.unprocessableEntity().build();
         }
         return ResponseEntity.badRequest().build();
     }
