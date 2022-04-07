@@ -2,20 +2,18 @@ package de.neuefische.app.spotify;
 
 import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistBody;
 import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
-import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylistBody;
-import lombok.RequiredArgsConstructor;
+import de.neuefische.app.spotify.playlistsearch.PlaylistTracksRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.thymeleaf.expression.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -39,15 +37,38 @@ public class SpotifyApiService {
 
         String newPlaylistId = addNewPlaylist(accessTokenResponse.getBody(), title, spotifyUserId);
 
+        addTracksToNewPlaylist(accessTokenResponse.getBody(), newPlaylistId, uris);
+    }
+
+    private void addTracksToNewPlaylist(SpotifyGetAccessTokenBody accessTokenResponse, String playlistId, List<String> uris){
+        List<PlaylistTracksRequest> uriPartitions = divideUris(uris);
+        HttpHeaders headers = createHeaders(accessTokenResponse.accessToken());
+        for(PlaylistTracksRequest uriChunks : uriPartitions){
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<PlaylistTracksRequest> request = new HttpEntity<>(uriChunks, headers);
+            ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
+                    "https://api.spotify.com/v1/playlists/" + playlistId +"/tracks",
+                    HttpMethod.POST,
+                    request,
+                    SpotifyGetPlaylistBody.class
+            );
+        }
+    }
+
+    private List<PlaylistTracksRequest> divideUris(List<String> uris){
+        int n = (int)Math.ceil(uris.size()/100.0);
+        int chunks = (int)Math.ceil(uris.size() / n);
+        List<PlaylistTracksRequest> uriPartitions = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            uriPartitions.add(new PlaylistTracksRequest(uris.subList( i * chunks, Math.min(( i + 1 ) * chunks, uris.size()))));
+        }
+        return uriPartitions;
     }
 
     private String addNewPlaylist(SpotifyGetAccessTokenBody accessTokenResponse, String title, String userId){
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("name", title);
-        map.add("description", "New playlist description");
-        //map.add("public", "false");
         HttpHeaders headers = createHeaders(accessTokenResponse.accessToken());
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> request = new HttpEntity<>("{\"name\":\"" + title + "\",\"description\":\"New playlist description\",\"public\":false}", headers);
         ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/users/" + userId +"/playlists",
                 HttpMethod.POST,
@@ -55,17 +76,6 @@ public class SpotifyApiService {
                 SpotifyGetPlaylistBody.class
         );
         return userPlaylistsResponse.getBody().id();
-    }
-
-    private ResponseEntity<SpotifySearchPlaylistBody> getSpotifySearchResult(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, String searchValue){
-        ResponseEntity<SpotifySearchPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
-                "https://api.spotify.com/v1/search?q=" + searchValue +"&type=playlist&limit=20",
-                HttpMethod.GET,
-                new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                SpotifySearchPlaylistBody.class
-        );
-        return userPlaylistsResponse;
-
     }
 
     private ResponseEntity<SpotifyGetAccessTokenBody> getRefreshTokenFromSpotify(){
@@ -82,13 +92,13 @@ public class SpotifyApiService {
         );
     }
 
-    HttpHeaders createGetTokenHeaders(){
+    private HttpHeaders createGetTokenHeaders(){
         HttpHeaders header = new HttpHeaders();
         header.setBasicAuth(spotifyClientId,spotifyAuthSecret);
         return header;
     }
 
-    HttpHeaders createHeaders(String token){
+    private HttpHeaders createHeaders(String token){
         return new HttpHeaders() {{
             String authHeader = "Bearer " + token;
             set( "Authorization", authHeader );

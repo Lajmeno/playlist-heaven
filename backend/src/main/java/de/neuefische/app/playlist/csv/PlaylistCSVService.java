@@ -3,7 +3,6 @@ package de.neuefische.app.playlist.csv;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.*;
-import de.neuefische.app.playlist.data.PlaylistTrack;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -49,7 +48,6 @@ public class PlaylistCSVService {
                     .toList();
 
             return Optional.of(uris);
-
 
         } catch (IllegalStateException | IllegalArgumentException | IOException e) {
             LOGGER.info("csv could not be imported", e);

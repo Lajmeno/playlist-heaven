@@ -19,22 +19,17 @@ import java.util.Objects;
 
 public class PlaylistCSVTrack {
 
-
     @CsvBindByName(column = "1 Title")
     private String title;
-
 
     @CsvBindByName(column = "2 Artists")
     private String artists;
 
-
     @CsvBindByName(column = "3 Album")
     private String album;
 
-
     @CsvBindByName(column = "4 Release Date")
     private String albumReleaseDate;
-
 
     @CsvBindByName(column = "5 SpotifyUri")
     private String spotifyUri;
