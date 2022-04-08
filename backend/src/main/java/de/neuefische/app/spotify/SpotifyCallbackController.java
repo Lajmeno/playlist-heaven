@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/api/callback")
@@ -78,14 +81,33 @@ public class SpotifyCallbackController {
     }
 
     private void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, UserDocument user) {
+        /*
         ResponseEntity<SpotifyGetAllUserPlaylistsBody> userPlaylistsResponse = restTemplate.exchange(
-                "https://api.spotify.com/v1/me/playlists?limit=20&offset=0",
+                "https://api.spotify.com/users/"+ user.getSpotifyId() + "/playlists?limit=50&offset=0",
                 HttpMethod.GET,
                 new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
                 SpotifyGetAllUserPlaylistsBody.class
         );
 
-        for(SpotifyGetAllUserPlaylistsItems playlist : userPlaylistsResponse.getBody().items()){
+         */
+        List<SpotifyGetAllUserPlaylistsItems> playlists = new ArrayList<>();
+        boolean hasTracksLeftToGet = true;
+        int i = 0;
+        while(hasTracksLeftToGet){
+            ResponseEntity<SpotifyGetAllUserPlaylistsBody> userPlaylistsResponse = restTemplate.exchange(
+                    "https://api.spotify.com/users/"+ user.getSpotifyId() + "/playlists?limit=50&offset=" + (i * 50),
+                    HttpMethod.GET,
+                    new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
+                    SpotifyGetAllUserPlaylistsBody.class
+            );
+            //playlists = Stream.concat(playlists.stream(), userPlaylistsResponse.getBody().items().stream()).toList();
+            playlists.addAll(userPlaylistsResponse.getBody().items());
+            hasTracksLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
+            i += 1;
+        }
+
+
+        for(SpotifyGetAllUserPlaylistsItems playlist : playlists){
             PlaylistData playlistData =spotifyApiService.getPlaylistWithTracks(accessTokenResponse.getBody(), playlist.id());
             playlistData.setSpotifyUserId(user.getSpotifyId());
             playlistService.savePlaylist(playlistData);
