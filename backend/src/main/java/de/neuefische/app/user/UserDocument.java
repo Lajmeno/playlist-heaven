@@ -14,6 +14,7 @@ public class UserDocument {
     private String email;
     private String spotifyId;
     private String name;
+    private String spotifyName;
     private String password;
 
     @Id

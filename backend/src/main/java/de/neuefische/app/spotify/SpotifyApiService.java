@@ -51,32 +51,8 @@ public class SpotifyApiService {
 
     public Optional<PlaylistData> getPlaylistFromSpotify(String id){
         ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
-
         try {
-            ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsTracksResponse = restTemplate.exchange(
-                    "https://api.spotify.com/v1/playlists/" + id,
-                    HttpMethod.GET,
-                    new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                    SpotifyGetPlaylistBody.class
-            );
-            SpotifyGetPlaylistBody responseBody = userPlaylistsTracksResponse.getBody();
-            List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
-            List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
-            String urlForNextTracks = responseBody.tracks().next();
-            boolean hasMoreThan100Tracks = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
-            while(hasMoreThan100Tracks){
-                ResponseEntity<SpotifyPlaylistTracks> userPlaylistsNextTracksResponse = restTemplate.exchange(
-                        urlForNextTracks,
-                        HttpMethod.GET,
-                        new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                        SpotifyPlaylistTracks.class
-                );
-                tracks = Stream.concat(tracks.stream(), userPlaylistsNextTracksResponse.getBody().items().stream().map(item -> PlaylistTrack.of(item.track()))).toList();
-                SpotifyPlaylistTracks tracksForInfo = userPlaylistsNextTracksResponse.getBody();
-                urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
-                hasMoreThan100Tracks = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
-            }
-            PlaylistData playlistData = new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
+            PlaylistData playlistData = getPlaylistWithTracks(accessTokenResponse.getBody(), id);
             return Optional.of(playlistData);
         }catch (Exception e) {
             LOGGER.info("Playlist could not be found", e);
@@ -105,6 +81,33 @@ public class SpotifyApiService {
                     SpotifyGetPlaylistBody.class
             );
         }
+    }
+
+    public PlaylistData getPlaylistWithTracks(SpotifyGetAccessTokenBody accessTokenBody, String playlistId){
+        ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsTracksResponse = restTemplate.exchange(
+                "https://api.spotify.com/v1/playlists/" + playlistId,
+                HttpMethod.GET,
+                new HttpEntity<>(createHeaders(accessTokenBody.accessToken())),
+                SpotifyGetPlaylistBody.class
+        );
+        SpotifyGetPlaylistBody responseBody = userPlaylistsTracksResponse.getBody();
+        List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
+        List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
+        String urlForNextTracks = responseBody.tracks().next();
+        boolean hasMoreThan100Tracks = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
+        while(hasMoreThan100Tracks){
+            ResponseEntity<SpotifyPlaylistTracks> userPlaylistsNextTracksResponse = restTemplate.exchange(
+                    urlForNextTracks,
+                    HttpMethod.GET,
+                    new HttpEntity<>(createHeaders(accessTokenBody.accessToken())),
+                    SpotifyPlaylistTracks.class
+            );
+            tracks = Stream.concat(tracks.stream(), userPlaylistsNextTracksResponse.getBody().items().stream().map(item -> PlaylistTrack.of(item.track()))).toList();
+            SpotifyPlaylistTracks tracksForInfo = userPlaylistsNextTracksResponse.getBody();
+            urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
+            hasMoreThan100Tracks = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
+        }
+        return new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
     }
 
     private List<PlaylistTracksRequest> divideUris(List<String> uris){

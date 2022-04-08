@@ -28,4 +28,10 @@ public class PlaylistService {
     public Optional<PlaylistData> getPlaylistById(String id) {
         return playlistRepository.findBySpotifyId(id);
     }
+
+    public Optional<PlaylistData> deletePlaylist(String spotifyId, String name) {
+        Optional<PlaylistData> playlistData = playlistRepository.findBySpotifyIdAndSpotifyUserId(spotifyId, name);
+        playlistData.ifPresent(playlist -> playlistRepository.delete(playlist));
+        return playlistData;
+    }
 }

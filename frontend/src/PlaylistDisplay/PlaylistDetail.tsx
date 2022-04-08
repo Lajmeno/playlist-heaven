@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
 import TrackItem from "./TrackItem";
 
@@ -13,6 +13,8 @@ export default function PlaylistDetail(){
     const[readyToRender, setReadyToRender] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
+
+    const nav = useNavigate();
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists/${params.id}`, {
@@ -56,6 +58,26 @@ export default function PlaylistDetail(){
         }) 
     }
 
+    const deleteFromDB = () => {
+        fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists/${params.id}`, {
+            method: "DELETE",
+            headers:{
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer"+ localStorage.getItem("jwt")
+            }
+        })
+        .then(response => {
+            if(!(response.status === 404)){
+                return response.json()
+            }
+            throw new Error("Playlist could not be deleted");
+        })
+        .then(() => {
+            nav('/overview'); 
+        })
+        .catch((e) => {setErrorMessage(e.message)})
+    } 
+
 
     return(
         <div>
@@ -65,6 +87,7 @@ export default function PlaylistDetail(){
             <div>{readyToRender 
             && <div>
             <button onClick={() => downloadCSV()}>Download Playlist</button>
+            <button onClick={() => deleteFromDB()}>Delete From your Collection</button>
             <h3>{playlist.name}</h3>
             <div> {playlist
                 .tracks
