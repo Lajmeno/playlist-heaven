@@ -92,7 +92,6 @@ public class SpotifyApiService {
     }
 
 
-
     private void addTracksToNewPlaylist(SpotifyGetAccessTokenBody accessTokenResponse, String playlistId, List<String> uris){
         List<PlaylistTracksRequest> uriPartitions = divideUris(uris);
         HttpHeaders headers = createHeaders(accessTokenResponse.accessToken());
