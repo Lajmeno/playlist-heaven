@@ -6,6 +6,8 @@ import java.util.List;
 
 public record SpotifyPlaylistTracks (
         @JsonProperty("items") List<SpotifyGetPlaylistsItems> items,
-        @JsonProperty("added_at") String addedAt
+        @JsonProperty("total") int total,
+        @JsonProperty("next") String next,
+        @JsonProperty("offset") int offset
 ) {
 }
