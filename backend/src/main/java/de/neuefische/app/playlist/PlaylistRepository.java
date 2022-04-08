@@ -13,4 +13,6 @@ public interface PlaylistRepository extends MongoRepository<PlaylistData, String
     Optional<PlaylistData> findBySpotifyId(String spotifyId);
 
     List<PlaylistData> findBySpotifyUserId(String spotifyUserId);
+
+    Optional<PlaylistData> findBySpotifyIdAndSpotifyUserId(String spotifyId, String spotifyUserId);
 }

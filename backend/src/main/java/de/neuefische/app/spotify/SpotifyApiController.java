@@ -46,5 +46,4 @@ public class SpotifyApiController {
         return spotifyApiService.searchPlaylists(value).stream().map(playlist -> PlaylistDTO.of(playlist)).toList();
     }
 
-
 }

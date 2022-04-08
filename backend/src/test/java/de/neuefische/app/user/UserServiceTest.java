@@ -12,7 +12,7 @@ class UserServiceTest {
 
     @Test
     void shouldNotSaveUserBecauseAlreadyExistInDB(){
-        UserDocument user = new UserDocument("user@mai.com", "1223", "userone", null, null);
+        UserDocument user = new UserDocument("user@mai.com", "1223", "userone", null, null, null);
         UserRepo repo = Mockito.mock(UserRepo.class);
         UserService service = new UserService(repo);
 

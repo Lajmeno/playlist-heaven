@@ -42,6 +42,11 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
+    @DeleteMapping("/{spotifyId}")
+    public ResponseEntity deletePlaylistFromDB(@PathVariable String spotifyId, Principal principal){
+        return ResponseEntity.of(playlistService.deletePlaylist(spotifyId, principal.getName()));
+    }
+
 
 
 }
