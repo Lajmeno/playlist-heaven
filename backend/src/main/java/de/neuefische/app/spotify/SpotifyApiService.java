@@ -8,7 +8,6 @@ import de.neuefische.app.spotify.playlistresponse.*;
 import de.neuefische.app.spotify.playlistsearch.PlaylistTracksRequest;
 import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylist;
 import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylistBody;
-import de.neuefische.app.user.UserDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
