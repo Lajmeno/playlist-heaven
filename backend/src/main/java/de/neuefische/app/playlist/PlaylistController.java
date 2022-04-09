@@ -5,10 +5,12 @@ import de.neuefische.app.playlist.dto.PlaylistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/playlists")
@@ -33,7 +35,7 @@ public class PlaylistController {
     }
 
     @PostMapping
-    public ResponseEntity savePlaylistForUser(@RequestBody PlaylistDTO playlist, Principal principal){
+    public ResponseEntity<Void> savePlaylistForUser(@RequestBody PlaylistDTO playlist, Principal principal){
         PlaylistData playlistData = PlaylistData.of(playlist);
         playlistData.setSpotifyUserId(principal.getName());
         if(playlistService.savePlaylist(playlistData).isEmpty()){
@@ -43,8 +45,11 @@ public class PlaylistController {
     }
 
     @DeleteMapping("/{spotifyId}")
-    public ResponseEntity deletePlaylistFromDB(@PathVariable String spotifyId, Principal principal){
-        return ResponseEntity.of(playlistService.deletePlaylist(spotifyId, principal.getName()));
+    public ResponseEntity<Void> deletePlaylistFromDB(@PathVariable String spotifyId, Principal principal){
+        if(playlistService.deletePlaylist(spotifyId, principal.getName()).isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
     }
 
 

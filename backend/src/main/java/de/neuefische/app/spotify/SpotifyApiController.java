@@ -47,7 +47,7 @@ public class SpotifyApiController {
     }
 
     @GetMapping
-    public ResponseEntity reloadSpotifyPlaylists(Principal principal){
+    public ResponseEntity<String> reloadSpotifyPlaylists(Principal principal){
         try{
             spotifyApiService.reloadSpotifyPlaylists(principal.getName());
             return ResponseEntity.ok().build();

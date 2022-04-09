@@ -97,9 +97,9 @@ public class SpotifyApiService {
 
     public void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, String spotifyUserId) {
         List<SpotifyGetAllUserPlaylistsItems> playlists = new ArrayList<>();
-        boolean tracksLeftToGet = true;
+        boolean hasPlaylistsLeftToGet = true;
         int i = 0;
-        while(tracksLeftToGet){
+        while(hasPlaylistsLeftToGet){
             ResponseEntity<SpotifyGetAllUserPlaylistsBody> userPlaylistsResponse = restTemplate.exchange(
                     "https://api.spotify.com/v1/users/"+ spotifyUserId + "/playlists?limit=50&offset=" + (i * 50),
                     HttpMethod.GET,
@@ -107,7 +107,7 @@ public class SpotifyApiService {
                     SpotifyGetAllUserPlaylistsBody.class
             );
             playlists.addAll(userPlaylistsResponse.getBody().items());
-            tracksLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
+            hasPlaylistsLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
             i += 1;
         }
 
@@ -131,8 +131,8 @@ public class SpotifyApiService {
         List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
         List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
         String urlForNextTracks = responseBody.tracks().next();
-        boolean hasMoreThan100Tracks = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
-        while(hasMoreThan100Tracks){
+        boolean hasMoreTracksToGet = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
+        while(hasMoreTracksToGet){
             ResponseEntity<SpotifyPlaylistTracks> userPlaylistsNextTracksResponse = restTemplate.exchange(
                     urlForNextTracks,
                     HttpMethod.GET,
@@ -142,7 +142,7 @@ public class SpotifyApiService {
             tracks = Stream.concat(tracks.stream(), userPlaylistsNextTracksResponse.getBody().items().stream().map(item -> PlaylistTrack.of(item.track()))).toList();
             SpotifyPlaylistTracks tracksForInfo = userPlaylistsNextTracksResponse.getBody();
             urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
-            hasMoreThan100Tracks = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
+            hasMoreTracksToGet = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
         }
         return new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
     }
