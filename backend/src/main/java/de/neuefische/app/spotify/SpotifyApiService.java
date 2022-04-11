@@ -1,11 +1,10 @@
 package de.neuefische.app.spotify;
 
+import de.neuefische.app.playlist.PlaylistService;
 import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.data.PlaylistTrack;
-import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistBody;
-import de.neuefische.app.spotify.playlistresponse.SpotifyPlaylistTracks;
-import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
+import de.neuefische.app.spotify.playlistresponse.*;
 import de.neuefische.app.spotify.playlistsearch.PlaylistTracksRequest;
 import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylist;
 import de.neuefische.app.spotify.playlistsearch.SpotifySearchPlaylistBody;
@@ -31,14 +30,16 @@ public class SpotifyApiService {
     private final String spotifyClientId;
     private final String spotifyAuthSecret;
     private final SpotifyRefreshToken refreshToken;
+    private final PlaylistService playlistService;
 
     public SpotifyApiService(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId,
                                 @Value("${spotify.client.secret}") String spotifyAuthSecret,
-                                SpotifyRefreshToken refreshToken){
+                                SpotifyRefreshToken refreshToken, PlaylistService playlistService){
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.refreshToken = refreshToken;
+        this.playlistService = playlistService;
     }
 
     public void createNewSpotifyPlaylist(String title, List<String> uris, String spotifyUserId) {
@@ -83,6 +84,42 @@ public class SpotifyApiService {
         }
     }
 
+    public void reloadSpotifyPlaylists(String spotifyUserId) throws Exception {
+        try{
+            ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
+            getSpotifyUserPlaylists(accessTokenResponse, spotifyUserId);
+        }catch (Exception e) {
+            LOGGER.info("Could not reload Playlists from Spotify Api", e);
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
+    public void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, String spotifyUserId) {
+        List<SpotifyGetAllUserPlaylistsItems> playlists = new ArrayList<>();
+        boolean hasPlaylistsLeftToGet = true;
+        int i = 0;
+        while(hasPlaylistsLeftToGet){
+            ResponseEntity<SpotifyGetAllUserPlaylistsBody> userPlaylistsResponse = restTemplate.exchange(
+                    "https://api.spotify.com/v1/users/"+ spotifyUserId + "/playlists?limit=50&offset=" + (i * 50),
+                    HttpMethod.GET,
+                    new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
+                    SpotifyGetAllUserPlaylistsBody.class
+            );
+            playlists.addAll(userPlaylistsResponse.getBody().items());
+            hasPlaylistsLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
+            i += 1;
+        }
+
+        for(SpotifyGetAllUserPlaylistsItems playlist : playlists){
+            PlaylistData playlistData =getPlaylistWithTracks(accessTokenResponse.getBody(), playlist.id());
+            playlistData.setSpotifyUserId(spotifyUserId);
+            playlistService.savePlaylist(playlistData);
+        }
+    }
+
+
+
     public PlaylistData getPlaylistWithTracks(SpotifyGetAccessTokenBody accessTokenBody, String playlistId){
         ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsTracksResponse = restTemplate.exchange(
                 "https://api.spotify.com/v1/playlists/" + playlistId,
@@ -94,8 +131,8 @@ public class SpotifyApiService {
         List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
         List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
         String urlForNextTracks = responseBody.tracks().next();
-        boolean hasMoreThan100Tracks = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
-        while(hasMoreThan100Tracks){
+        boolean hasMoreTracksToGet = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
+        while(hasMoreTracksToGet){
             ResponseEntity<SpotifyPlaylistTracks> userPlaylistsNextTracksResponse = restTemplate.exchange(
                     urlForNextTracks,
                     HttpMethod.GET,
@@ -105,7 +142,7 @@ public class SpotifyApiService {
             tracks = Stream.concat(tracks.stream(), userPlaylistsNextTracksResponse.getBody().items().stream().map(item -> PlaylistTrack.of(item.track()))).toList();
             SpotifyPlaylistTracks tracksForInfo = userPlaylistsNextTracksResponse.getBody();
             urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
-            hasMoreThan100Tracks = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
+            hasMoreTracksToGet = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
         }
         return new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
     }

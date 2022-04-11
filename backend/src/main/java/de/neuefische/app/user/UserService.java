@@ -16,7 +16,7 @@ public class UserService {
         if(userInRepo.isEmpty()) {
             return userRepo.save(user);
         }
-        return userInRepo.get();
+        return user;
     }
 
     public Optional<UserDocument> getUser(String spotifyId){

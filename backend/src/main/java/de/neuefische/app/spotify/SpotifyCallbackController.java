@@ -1,13 +1,7 @@
 package de.neuefische.app.spotify;
 
-import de.neuefische.app.playlist.data.PlaylistData;
-import de.neuefische.app.playlist.data.PlaylistImage;
-import de.neuefische.app.playlist.PlaylistService;
-import de.neuefische.app.playlist.data.PlaylistTrack;
+
 import de.neuefische.app.security.JwtService;
-import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsBody;
-import de.neuefische.app.spotify.playlistresponse.SpotifyGetPlaylistBody;
-import de.neuefische.app.spotify.playlistresponse.SpotifyGetAllUserPlaylistsItems;
 import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
 import de.neuefische.app.user.UserDocument;
 import de.neuefische.app.user.UserService;
@@ -22,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+
 import java.util.HashMap;
-import java.util.List;
+import java.util.Objects;
+
 
 @Controller
 @RequestMapping("/api/callback")
@@ -35,20 +31,18 @@ public class SpotifyCallbackController {
     private final String spotifyClientId;
     private final String spotifyAuthSecret;
     private final UserService userService;
-    private final PlaylistService playlistService;
     private final JwtService jwtService;
     private final SpotifyRefreshToken refreshToken;
     private final SpotifyApiService spotifyApiService;
 
     public SpotifyCallbackController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId,
                                      @Value("${spotify.client.secret}") String spotifyAuthSecret, UserService userService,
-                                     PlaylistService playlistService, JwtService jwtService, SpotifyRefreshToken refreshToken,
+                                     JwtService jwtService, SpotifyRefreshToken refreshToken,
                                      SpotifyApiService spotifyApiService) {
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
         this.spotifyAuthSecret = spotifyAuthSecret;
         this.userService = userService;
-        this.playlistService= playlistService;
         this.jwtService = jwtService;
         this.refreshToken = refreshToken;
         this.spotifyApiService = spotifyApiService;
@@ -68,29 +62,17 @@ public class SpotifyCallbackController {
                 request,
                 SpotifyGetAccessTokenBody.class
         );
+
         refreshToken.setRefreshToken(accessTokenResponse.getBody().refreshToken());
         UserDocument user= saveSpotifyUser(accessTokenResponse);
-        getSpotifyUserPlaylists(accessTokenResponse, user);
-
+        if(!Objects.equals(user.getId(), null)){
+            spotifyApiService.getSpotifyUserPlaylists(accessTokenResponse, user.getSpotifyId());
+        }
         model.addAttribute("jwt", jwtService.createToken(new HashMap<>(), user.getSpotifyId()));
 
         return "oauth-landing";
     }
 
-    private void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, UserDocument user) {
-        ResponseEntity<SpotifyGetAllUserPlaylistsBody> userPlaylistsResponse = restTemplate.exchange(
-                "https://api.spotify.com/v1/me/playlists?limit=20&offset=0",
-                HttpMethod.GET,
-                new HttpEntity<>(createHeaders(accessTokenResponse.getBody().accessToken())),
-                SpotifyGetAllUserPlaylistsBody.class
-        );
-
-        for(SpotifyGetAllUserPlaylistsItems playlist : userPlaylistsResponse.getBody().items()){
-            PlaylistData playlistData =spotifyApiService.getPlaylistWithTracks(accessTokenResponse.getBody(), playlist.id());
-            playlistData.setSpotifyUserId(user.getSpotifyId());
-            playlistService.savePlaylist(playlistData);
-        }
-    }
 
     HttpHeaders createGetTokenHeaders(){
         HttpHeaders header = new HttpHeaders();

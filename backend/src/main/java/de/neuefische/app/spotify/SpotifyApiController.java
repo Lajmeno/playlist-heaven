@@ -46,4 +46,15 @@ public class SpotifyApiController {
         return spotifyApiService.searchPlaylists(value).stream().map(playlist -> PlaylistDTO.of(playlist)).toList();
     }
 
+    @GetMapping
+    public ResponseEntity<String> reloadSpotifyPlaylists(Principal principal){
+        try{
+            spotifyApiService.reloadSpotifyPlaylists(principal.getName());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
