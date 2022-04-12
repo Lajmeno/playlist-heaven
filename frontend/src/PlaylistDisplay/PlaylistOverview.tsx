@@ -57,9 +57,9 @@ export default function PlaylistOverview() {
             <div><button onClick={() => reloadPlaylists()}>Reload Your Playlists from Spotify</button></div>
             {errorMessage && {errorMessage}}
             <div>
-            {playlists.length > 1 && 
-            playlists
-            .map(item => <PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/>)}
+                {playlists.length > 1 && 
+                playlists
+                .map(item => <PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/>)}
             </div>
         </div>
     )
