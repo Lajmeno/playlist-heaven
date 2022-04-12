@@ -30,14 +30,16 @@ public class SpotifyCallbackController {
     private final RestTemplate restTemplate;
     private final String spotifyClientId;
     private final String spotifyAuthSecret;
+    private final String spotifyCallbackURL;
     private final UserService userService;
     private final JwtService jwtService;
     private final SpotifyRefreshToken refreshToken;
     private final SpotifyApiService spotifyApiService;
 
     public SpotifyCallbackController(RestTemplate restTemplate, @Value("${spotify.client.id}") String spotifyClientId,
-                                     @Value("${spotify.client.secret}") String spotifyAuthSecret, UserService userService,
-                                     JwtService jwtService, SpotifyRefreshToken refreshToken,
+                                     @Value("${spotify.client.secret}") String spotifyAuthSecret,
+                                     @Value("${spotify.callback.url}") String spotifyCallbackURL,
+                                     UserService userService, JwtService jwtService, SpotifyRefreshToken refreshToken,
                                      SpotifyApiService spotifyApiService) {
         this.restTemplate = restTemplate;
         this.spotifyClientId = spotifyClientId;
@@ -46,6 +48,7 @@ public class SpotifyCallbackController {
         this.jwtService = jwtService;
         this.refreshToken = refreshToken;
         this.spotifyApiService = spotifyApiService;
+        this.spotifyCallbackURL = spotifyCallbackURL;
     }
 
     @GetMapping
@@ -53,7 +56,7 @@ public class SpotifyCallbackController {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
         map.add("code", code);
-        map.add("redirect_uri", "http://localhost:8080/api/callback");
+        map.add("redirect_uri", spotifyCallbackURL);
         HttpHeaders headers = createGetTokenHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = restTemplate.exchange(

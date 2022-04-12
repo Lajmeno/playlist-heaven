@@ -68,7 +68,7 @@ export default function PlaylistDetail(){
         })
         .then(response => {
             if(!(response.status === 404)){
-                return response.json()
+                return response;
             }
             throw new Error("Playlist could not be deleted");
         })
@@ -91,7 +91,7 @@ export default function PlaylistDetail(){
             <h3>{playlist.name}</h3>
             <div> {playlist
                 .tracks
-                .map((item : PlaylistTrack) => <div><TrackItem title={item.title} artists={item.artists}
+                .map((item : PlaylistTrack) => <div><TrackItem title={item.title} key={item.spotifyUri} artists={item.artists}
                  album={item.album} albumReleaseDate={item.albumReleaseDate} /></div>)}
             </div></div>}
             </div>
