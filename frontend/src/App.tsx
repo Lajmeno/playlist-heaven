@@ -1,18 +1,16 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
-import Navigation from "./Navigation";
+import NavigationBar from "./NavigationBar";
 
 
 function App() {
 
     return (
         <Suspense fallback="loading..">
-        <div>
-        <Header />
-        <Navigation />
-        <Outlet />
-        </div>
+                <Header />
+                <NavigationBar />
+                <Outlet />
         </Suspense>
     );
 }
