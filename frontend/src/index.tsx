@@ -9,6 +9,7 @@ import SpotifySearch from './SpotifyOperations/SpotifySearch';
 import reportWebVitals from './reportWebVitals';
 import SearchPlaylistDetail from './SpotifyOperations/SearchPlaylistDetail';
 import CreateSpotifyPlaylist from './SpotifyOperations/CreateSpotifyPlaylist';
+import './index.css'
 
 ReactDOM.render(
     <React.StrictMode>
