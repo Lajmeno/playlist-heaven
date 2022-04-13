@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Col, Container, Row } from "react-bootstrap";
 import PlaylistItem from "./PlaylistItem"
 import { PlaylistsResponse } from "./PlaylistModel"
 
@@ -57,9 +58,13 @@ export default function PlaylistOverview() {
             <div><button onClick={() => reloadPlaylists()}>Reload Your Playlists from Spotify</button></div>
             {errorMessage && {errorMessage}}
             <div>
-                {playlists.length > 1 && 
-                playlists
-                .map(item => <PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/>)}
+                <Container>
+                    <Row>
+                        {playlists.length > 1 && 
+                        playlists
+                        .map(item => <Col><PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/></Col>)}
+                     </Row>
+             </Container>
             </div>
         </div>
     )

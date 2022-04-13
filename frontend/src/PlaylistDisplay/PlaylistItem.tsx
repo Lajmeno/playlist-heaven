@@ -1,4 +1,7 @@
+import { Card } from "react-bootstrap"
 import { Link } from "react-router-dom"
+
+import './Playlists.css'
 
 interface PlaylistItemImage{
     url: string
@@ -12,15 +15,19 @@ interface PlaylistItemProps{
 
 export default function PlaylistItem(props:PlaylistItemProps) {
 
+
     return(
         <div>   
-            <div>
-                <Link to={`${props.spotifyId}`}>
-                <img src={props.images.length > 0 ? (props.images.length > 1 ? props.images[1].url : props.images[0].url) : ""} alt=""></img>
+            <Card className="ml-3" style={{ width: '14rem' }} bg="dark" text="secondary">
+                <Link className="link" to={`${props.spotifyId}`} style={{ textDecoration: 'none' }}>
+                    <Card.Img variant="top" src={props.images.length > 0 ? (props.images.length > 1 ? props.images[1].url : props.images[0].url) :require('../images/default-image.png') } />
+                    <Card.Body>
+                        <Card.Title style={{fontSize:"18px"}}>{props.name}</Card.Title>
+                    </Card.Body>
                 </Link>
-                </div>
-                <h3>{props.name}</h3>
+            </Card>
         </div>
+        
     )
     
 }
