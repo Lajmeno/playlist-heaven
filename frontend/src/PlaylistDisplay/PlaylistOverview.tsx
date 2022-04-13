@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Pagination, Row } from "react-bootstrap";
 import PlaylistItem from "./PlaylistItem"
 import { PlaylistsResponse } from "./PlaylistModel"
 
@@ -11,6 +11,12 @@ export default function PlaylistOverview() {
     const [playlists, setPlaylists] = useState([] as Array<PlaylistsResponse>);
 
     const[errorMessage, setErrorMessage] = useState("");
+
+    const [page, setPage] = useState(1);
+
+    const [paginationAmount, setPaginationAmount] = useState(1);
+
+    const [amountItemsOnPage, setAmountItemsOnPage] = useState(12);
 
     useEffect(() => {
         fetchAll();
@@ -29,7 +35,10 @@ export default function PlaylistOverview() {
             }
             throw new Error("Could not get Playlists from Backend")
         })
-        .then(requestBody => setPlaylists(requestBody))
+        .then(requestBody => {
+            setPlaylists(requestBody);
+            setPaginationAmount(Math.ceil(requestBody.length / amountItemsOnPage));
+        })
         .catch(e => setErrorMessage(e.message));
     }
 
@@ -52,20 +61,49 @@ export default function PlaylistOverview() {
 
     }
 
+
+   
+    let items = [];
+    for (let number = 1; number <= paginationAmount; number++) {
+        items.push(
+        <Pagination.Item onClick={() => setPage(number)} key={number} active={number === page}>
+        {number}
+        </Pagination.Item>
+        );
+    };
+
+    const paginationBasic = (
+        <div>
+            <Pagination>
+                <Pagination.Prev onClick={() => page === 1 ? "" : setPage(page-1)}/>
+                {items}
+                <Pagination.Next onClick={() => (page < (paginationAmount - 1) ? setPage(page+1): "")}/>
+            </Pagination> 
+        </div>
+    );
+
+
     return(
         <div>
-            <h2>Your Spotify Playlists</h2>
-            <div><button onClick={() => reloadPlaylists()}>Reload Your Playlists from Spotify</button></div>
+            
             {errorMessage && {errorMessage}}
             <div>
                 <Container>
+                    <Row  md="auto" className="justify-content-md-center"><Button onClick={() => reloadPlaylists()}>Reload Your Playlists from Spotify</Button></Row>
+                    <Row md="auto" className="justify-content-center">{paginationBasic}</Row>
                     <Row>
                         {playlists.length > 1 && 
                         playlists
-                        .map(item => <Col><PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/></Col>)}
+                        .map((item, index) => {{
+                            if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
+                                return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>
+                            }
+                        }})}
                      </Row>
              </Container>
+             
             </div>
+           
         </div>
     )
 }
