@@ -4,8 +4,6 @@ import PlaylistItem from "./PlaylistItem"
 import { PlaylistsResponse } from "./PlaylistModel"
 
 
-
-
 export default function PlaylistOverview() {
 
     const [playlists, setPlaylists] = useState([] as Array<PlaylistsResponse>);
@@ -16,7 +14,7 @@ export default function PlaylistOverview() {
 
     const [paginationAmount, setPaginationAmount] = useState(1);
 
-    const [amountItemsOnPage, setAmountItemsOnPage] = useState(12);
+    const amountItemsOnPage = 12;
 
     useEffect(() => {
         fetchAll();
@@ -58,10 +56,7 @@ export default function PlaylistOverview() {
             }
         })
         .catch(e => setErrorMessage(e.message));
-
     }
-
-
    
     let items = [];
     for (let number = 1; number <= paginationAmount; number++) {
@@ -94,11 +89,12 @@ export default function PlaylistOverview() {
                     <Row>
                         {playlists.length > 1 && 
                         playlists
-                        .map((item, index) => {{
+                        .map((item, index) => {
                             if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
                                 return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>
                             }
-                        }})}
+                            return <></>;
+                        })}
                      </Row>
              </Container>
              
