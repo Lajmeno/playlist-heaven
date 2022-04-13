@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +24,7 @@ public class PlaylistTrack {
     public static PlaylistTrack of(SpotifyPlaylistTrack track){
         List<PlaylistTrackArtist> artists = track.artists().stream().map(t -> PlaylistTrackArtist.of(t)).toList();
         return new PlaylistTrack(track.name(), artists, track.album().name(), track.album().date(), track.uri());
+
     }
 
     public static PlaylistTrack of(PlaylistTrackDTO track){
