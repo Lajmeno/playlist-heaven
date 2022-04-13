@@ -15,16 +15,17 @@ interface PlaylistItemProps{
 
 export default function PlaylistItem(props:PlaylistItemProps) {
 
+
     return(
         <div>   
-                <Card style={{ width: '18rem' }} bg="dark" text="secondary">
+            <Card className="ml-3" style={{ width: '14rem' }} bg="dark" text="secondary">
                 <Link className="link" to={`${props.spotifyId}`} style={{ textDecoration: 'none' }}>
-                <Card.Img variant="top" src={props.images.length > 0 ? (props.images.length > 1 ? props.images[1].url : props.images[0].url) :"holder.js/100px180?text=Image cap" } />
-                <Card.Body>
-                    <Card.Title>{props.name}</Card.Title>
-                </Card.Body>
+                    <Card.Img variant="top" src={props.images.length > 0 ? (props.images.length > 1 ? props.images[1].url : props.images[0].url) :require('../images/default-image.png') } />
+                    <Card.Body>
+                        <Card.Title style={{fontSize:"18px"}}>{props.name}</Card.Title>
+                    </Card.Body>
                 </Link>
-                </Card>
+            </Card>
         </div>
         
     )

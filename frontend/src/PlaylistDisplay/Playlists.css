@@ -4,3 +4,7 @@
   .link:hover {
      color: rgb(173, 173, 184)
   }
+
+  .col {
+     margin-bottom: 20px; 
+  }
