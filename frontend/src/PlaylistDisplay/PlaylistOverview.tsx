@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Container, Pagination, Row } from "react-bootstrap";
+import { Button, Col, Container, FormControl, InputGroup, Pagination, Row } from "react-bootstrap";
 import PlaylistItem from "./PlaylistItem"
 import { PlaylistsResponse } from "./PlaylistModel"
+import './Playlists.css'
 
 
 export default function PlaylistOverview() {
@@ -14,7 +15,10 @@ export default function PlaylistOverview() {
 
     const [paginationAmount, setPaginationAmount] = useState(1);
 
-    const amountItemsOnPage = 12;
+    const amountItemsOnPage = 15;
+
+    const [searchOn, setSearchOn] = useState(false);
+    const [searchItem, setSearchItem] = useState("");
 
     useEffect(() => {
         fetchAll();
@@ -35,6 +39,7 @@ export default function PlaylistOverview() {
         })
         .then(requestBody => {
             setPlaylists(requestBody);
+            //mapItems(requestBody)
             setPaginationAmount(Math.ceil(requestBody.length / amountItemsOnPage));
         })
         .catch(e => setErrorMessage(e.message));
@@ -57,8 +62,15 @@ export default function PlaylistOverview() {
         })
         .catch(e => setErrorMessage(e.message));
     }
+
+    /*
+    const mapItems = (items:Array<PlaylistsResponse>) => {
+        const pls = items.filter(ele => ele.name.toLowerCase().includes(searchItem.toLowerCase()));
+        setPaginationAmount(Math.ceil(pls.length / amountItemsOnPage));
+    }
+    */
    
-    let items = [];
+    const items = [];
     for (let number = 1; number <= paginationAmount; number++) {
         items.push(
         <Pagination.Item onClick={() => setPage(number)} key={number} active={number === page}>
@@ -77,24 +89,48 @@ export default function PlaylistOverview() {
         </div>
     );
 
-
+    
     return(
         <div>
             
             {errorMessage && {errorMessage}}
             <div>
                 <Container>
-                    <Row  md="auto" className="justify-content-md-center"><Button onClick={() => reloadPlaylists()}>Reload Your Playlists from Spotify</Button></Row>
+                    <Row></Row>
+                    <Row>
+                        <Col xl={{ span: 2, offset: 0 }}><Button className="custom-btn" onClick={() => {searchOn ? setSearchOn(false) : setSearchOn(true)}}>Search Collection</Button></Col>
+                        <Col xl={{ span: 2, offset: 8 }}>
+                            <Button onClick={() => reloadPlaylists()}>Reload Your Playlists from Spotify</Button>
+                        </Col>
+                    </Row>
+                    <Row className="search-collection" style={searchOn ? {display:"none"} : {} }>
+                            <Col md={{ span: 4, offset: 0 }}>
+                                <InputGroup className="mb-3" >
+                                    <InputGroup.Text id="inputGroup-sizing-default" >Search</InputGroup.Text>
+                                    <FormControl
+                                    value={searchItem}
+                                    onChange={v => {
+                                        setSearchItem(v.target.value);
+                                        //mapItems(playlists);
+                                        }}
+                                    aria-label="Search"
+                                    aria-describedby="inputGroup-sizing-default"
+                                    />
+                                </InputGroup>
+                            </Col>
+                    </Row>
                     <Row md="auto" className="justify-content-center">{paginationBasic}</Row>
                     <Row>
-                        {playlists.length > 1 && 
+                        {playlists.length > 1 &&   
                         playlists
+                        .filter(ele => ele.name.toLowerCase().includes(searchItem.toLowerCase()))
                         .map((item, index) => {
                             if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
                                 return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>
                             }
                             return <></>;
-                        })}
+                            })
+                        }
                      </Row>
              </Container>
              
