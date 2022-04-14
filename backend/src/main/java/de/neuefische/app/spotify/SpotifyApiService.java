@@ -184,7 +184,7 @@ public class SpotifyApiService {
 
     private ResponseEntity<SpotifySearchPlaylistBody> getSpotifySearchResult(SpotifyGetAccessTokenBody accessTokenResponse, String searchValue){
         ResponseEntity<SpotifySearchPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
-                "https://api.spotify.com/v1/search?q=" + searchValue +"&type=playlist&limit=20",
+                "https://api.spotify.com/v1/search?q=" + searchValue +"&type=playlist&limit=45",
                 HttpMethod.GET,
                 new HttpEntity<>(createHeaders(accessTokenResponse.accessToken())),
                 SpotifySearchPlaylistBody.class

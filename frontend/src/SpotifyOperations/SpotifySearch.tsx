@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { Button, Col, Container, FormControl, InputGroup, Row } from "react-bootstrap";
+import PaginationBasic from "../PaginationBasic";
 import PlaylistItem from "../PlaylistDisplay/PlaylistItem";
 import { PlaylistsResponse } from "../PlaylistDisplay/PlaylistModel";
 
@@ -6,13 +8,19 @@ import { PlaylistsResponse } from "../PlaylistDisplay/PlaylistModel";
 export default function SpotifySearch(){
 
 
-    const [searchItem, SetSearchItem] = useState("");
+    const [searchValue, setSearchValue] = useState("");
 
     const [playlists, setPlaylists] = useState([] as Array<PlaylistsResponse>)
     const [errorMessage, setErrorMessage] = useState("");
 
+    const [page, setPage] = useState(1);
+
+    const [paginationAmount, setPaginationAmount] = useState(0);
+
+    const amountItemsOnPage = 15;
+
     const searchSpotify = () =>{
-        fetch(`${process.env.REACT_APP_BASE_URL}/api/spotify/search/${searchItem}`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/api/spotify/search/${searchValue}`, {
             method: "GET",
             headers:{
                 'Content-Type': 'application/json',
@@ -28,23 +36,47 @@ export default function SpotifySearch(){
          })
         .then(responseBody => {
             setPlaylists(responseBody); 
+            setPaginationAmount(Math.ceil(responseBody.length / amountItemsOnPage));
             setErrorMessage("");
         })
         .catch((e:Error) => {setErrorMessage(e.message)})
     }
+
     
     return (
-        <div>
+        <Container>
+            <Row md="auto" className="justify-content-center"><h3>Search Playlists on Spotify</h3></Row>
+            <Row></Row>
+            <Row className="search-collection" >
+                    <Col md={{ span: 4, offset: 4 }}>
+                        <InputGroup className="mb-3" >
+                            <FormControl
+                            value={searchValue}
+                            onChange={v => {
+                                setSearchValue(v.target.value);
+                                setPage(1);
+                                }}
+                            aria-label="Search"
+                            aria-describedby="inputGroup-sizing-default"
+                            />
+                        </InputGroup>
+                    </Col>
+                    <Col md={{ span: 2, offset: 0 }}><Button onClick={() => searchSpotify()}>Start Search</Button></Col>
+            </Row>
             
-            <input type="text" placeholder="Search for Playlists on Spotify" value={searchItem} onChange = {v => SetSearchItem(v.target.value)}/>
-            <button onClick={() => searchSpotify()}>Search Playlist</button>
-
-            <div>
-            <h2>Your Playlists</h2>
-            {errorMessage && <div>{errorMessage}</div>}
-            {playlists.length > 1 && playlists
-            .map(item => <PlaylistItem name={item.name} key={item.spotifyId} images={item.images} spotifyId={item.spotifyId}/>)}
-        </div>
-        </div>
+            <Row md="auto" className="justify-content-center">{<PaginationBasic amount={paginationAmount} page={page} setPage={setPage}/>}</Row>
+                   
+            
+            <Row>{errorMessage && <div>{errorMessage}</div>}
+                {playlists.length > 1 && playlists
+                .map((item, index) => {
+                    if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
+                        return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>;
+                    }
+                    return <></>;
+                    })
+                }
+            </Row>
+        </Container>
     )
 }
