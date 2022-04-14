@@ -1,14 +1,22 @@
 .link {
     color: #FFF;
   }
-  .link:hover {
-     color: rgb(173, 173, 184)
-  }
+.link:hover {
+   color: rgb(173, 173, 184)
+}
 
-  .col {
-     margin-bottom: 20px; 
-  }
+.col {
+   margin-bottom: 20px; 
+}
 
-  .row {
-    margin-bottom: 20px; 
- }
+.row {
+   margin-bottom: 20px; 
+}
+
+
+.custom-btn {
+   background-color: "primary" !important;
+   border-color: black !important;
+   color: white;
+}
+
