@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Container, FormControl, InputGroup, Pagination, Row } from "react-bootstrap";
+import { Button, Col, Container, FormControl, InputGroup, Row } from "react-bootstrap";
 import PaginationBasic from "../PaginationBasic";
 import PlaylistItem from "./PlaylistItem"
 import { PlaylistsResponse } from "./PlaylistModel"
@@ -40,7 +40,7 @@ export default function PlaylistOverview() {
         })
         .then(requestBody => {
             setPlaylists(requestBody);
-            calcItemsAmount(requestBody, searchValue)
+            calcItemsAmount(requestBody, searchValue);
         })
         .catch(e => setErrorMessage(e.message));
     }
@@ -105,7 +105,7 @@ export default function PlaylistOverview() {
                         .filter(ele => ele.name.toLowerCase().includes(searchValue.toLowerCase()))
                         .map((item, index) => {
                             if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
-                                return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>
+                                return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>;
                             }
                             return <></>;
                             })
