@@ -147,7 +147,11 @@ public class SpotifyApiService {
                     new HttpEntity<>(createHeaders(accessTokenBody.accessToken())),
                     SpotifyPlaylistTracks.class
             );
-            tracks = Stream.concat(tracks.stream(), userPlaylistsNextTracksResponse.getBody().items().stream().map(item -> PlaylistTrack.of(item.track()))).toList();
+            tracks = Stream.concat(tracks.stream(), userPlaylistsNextTracksResponse.getBody().items().stream()
+                    .filter(item -> item.track() != null)
+                    .map(item -> PlaylistTrack.of(item.track())))
+                    .toList();
+
             SpotifyPlaylistTracks tracksForInfo = userPlaylistsNextTracksResponse.getBody();
             urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
             hasMoreTracksToGet = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
