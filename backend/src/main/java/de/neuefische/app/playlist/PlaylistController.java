@@ -41,7 +41,7 @@ public class PlaylistController {
         if(playlistService.savePlaylist(playlistData).isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{spotifyId}")
@@ -51,7 +51,5 @@ public class PlaylistController {
         }
         return ResponseEntity.ok().build();
     }
-
-
 
 }

@@ -128,8 +128,16 @@ public class SpotifyApiService {
                 SpotifyGetPlaylistBody.class
         );
         SpotifyGetPlaylistBody responseBody = userPlaylistsTracksResponse.getBody();
-        List<PlaylistTrack> tracks = responseBody.tracks().items().stream().map(item -> PlaylistTrack.of(item.track())).toList();
-        List<PlaylistImage> images = responseBody.images().stream().map(image -> PlaylistImage.of(image)).toList();
+
+        List<PlaylistTrack> tracks = responseBody.tracks().items().stream()
+                .filter(item -> item.track() != null)
+                .map(item -> PlaylistTrack.of(item.track()))
+                .toList();
+
+        List<PlaylistImage> images = responseBody.images().stream()
+                .map(image -> PlaylistImage.of(image))
+                .toList();
+
         String urlForNextTracks = responseBody.tracks().next();
         boolean hasMoreTracksToGet = !Objects.equals(urlForNextTracks, null) && responseBody.tracks().total() > 100;
         while(hasMoreTracksToGet){
