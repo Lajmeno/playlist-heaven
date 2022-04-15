@@ -22,7 +22,7 @@ export default function PlaylistOverview() {
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        const fetchAll = (searchVal:string) => {
+        const fetchAll = () => {
             fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
                 method: 'GET',
                 headers:{
@@ -37,12 +37,12 @@ export default function PlaylistOverview() {
             })
             .then(requestBody => {
                 setPlaylists(requestBody);
-                calcItemsAmount(requestBody, searchVal);
+                calcItemsAmount(requestBody, "");
             })
             .catch(e => setErrorMessage(e.message));
         }
 
-        fetchAll(searchValue);
+        fetchAll();
     }, [])
 
     const fetchAll = () => {
