@@ -22,6 +22,26 @@ export default function PlaylistOverview() {
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
+        const fetchAll = () => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
+                method: 'GET',
+                headers:{
+                    "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+                } 
+            })
+            .then(request => {
+                if(request.ok){
+                    return request.json();
+                }
+                throw new Error("Could not get Playlists from Backend")
+            })
+            .then(requestBody => {
+                setPlaylists(requestBody);
+                calcItemsAmount(requestBody, searchValue);
+            })
+            .catch(e => setErrorMessage(e.message));
+        }
+
         fetchAll();
     }, [])
 
@@ -40,10 +60,12 @@ export default function PlaylistOverview() {
         })
         .then(requestBody => {
             setPlaylists(requestBody);
-            calcItemsAmount(requestBody, "");
+            calcItemsAmount(requestBody, searchValue);
         })
         .catch(e => setErrorMessage(e.message));
     }
+
+   
 
     const reloadPlaylists = () => {
         fetch(`${process.env.REACT_APP_BASE_URL}/api/spotify`, {
