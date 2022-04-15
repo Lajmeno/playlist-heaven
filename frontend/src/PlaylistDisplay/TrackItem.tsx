@@ -1,3 +1,5 @@
+import { Col, Container, Row, Table } from "react-bootstrap";
+import './Playlists.css'
 
 
 interface DisplayArtist {
@@ -7,7 +9,8 @@ interface TrackItemProps{
     title : string,
     artists : Array<DisplayArtist>,
     album: string,
-    albumReleaseDate: string
+    albumReleaseDate: string,
+    index: number
 }
 
 export default function TrackItem(props:TrackItemProps){
@@ -30,6 +33,12 @@ export default function TrackItem(props:TrackItemProps){
     
     
     return(
-        <div>{props.title} || {displayArtistsNames(props.artists)}  || {props.album} || {props.albumReleaseDate}</div>
+        <tr>
+            <td>{props.index +1}</td>
+            <td>{props.title}</td>
+            <td>{displayArtistsNames(props.artists)}</td>
+            <td>{props.album}</td>
+            <td>{props.albumReleaseDate}</td>
+        </tr>
     );
 }
