@@ -37,6 +37,7 @@ export default function SpotifySearch(){
         .then(responseBody => {
             setPlaylists(responseBody); 
             setPaginationAmount(Math.ceil(responseBody.length / amountItemsOnPage));
+            setPage(1);
             setErrorMessage("");
         })
         .catch((e:Error) => {setErrorMessage(e.message)})
@@ -54,7 +55,6 @@ export default function SpotifySearch(){
                             value={searchValue}
                             onChange={v => {
                                 setSearchValue(v.target.value);
-                                setPage(1);
                                 }}
                             aria-label="Search"
                             aria-describedby="inputGroup-sizing-default"
