@@ -21,10 +21,6 @@ export default function PlaylistOverview() {
     const [searchOn, setSearchOn] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    useEffect(() => {
-        fetchAll();
-    }, [])
-
     const fetchAll = useCallback(() => {
         fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
             method: 'GET',
@@ -44,6 +40,10 @@ export default function PlaylistOverview() {
         })
         .catch(e => setErrorMessage(e.message));
     }, [searchValue]);
+
+    useEffect(() => {
+        fetchAll();
+    }, [fetchAll])
 
    
 
