@@ -37,7 +37,7 @@ export default function PlaylistOverview() {
             })
             .then(requestBody => {
                 setPlaylists(requestBody);
-                calcItemsAmount(requestBody, searchValue);
+                calcItemsAmount(requestBody, "");
             })
             .catch(e => setErrorMessage(e.message));
         }
