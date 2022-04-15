@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Button, Col, Container, FormControl, InputGroup, Row } from "react-bootstrap";
 import PaginationBasic from "../PaginationBasic";
 import PlaylistItem from "./PlaylistItem"
@@ -22,30 +22,10 @@ export default function PlaylistOverview() {
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        const fetchAll = () => {
-            fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
-                method: 'GET',
-                headers:{
-                    "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-                } 
-            })
-            .then(request => {
-                if(request.ok){
-                    return request.json();
-                }
-                throw new Error("Could not get Playlists from Backend")
-            })
-            .then(requestBody => {
-                setPlaylists(requestBody);
-                calcItemsAmount(requestBody, "");
-            })
-            .catch(e => setErrorMessage(e.message));
-        }
-
         fetchAll();
     }, [])
 
-    const fetchAll = () => {
+    const fetchAll = useCallback(() => {
         fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists`, {
             method: 'GET',
             headers:{
@@ -63,7 +43,7 @@ export default function PlaylistOverview() {
             calcItemsAmount(requestBody, searchValue);
         })
         .catch(e => setErrorMessage(e.message));
-    }
+    }, [searchValue]);
 
    
 
