@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button, Col, Container, Figure, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom"
 import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
 import TrackItem from "./TrackItem";
@@ -82,19 +83,46 @@ export default function PlaylistDetail(){
     return(
         <div>
             
-            {errorMessage && <div>{errorMessage}</div>}
+            {errorMessage && <div>{errorMessage}</div>}     
+            {readyToRender 
+            && <Container>
+                <Row></Row>
+                <Row>
+                    <Col>
+                <Figure>
+                    <Figure.Image
+                        width={221}
+                        height={240}
+                        alt="171x180"
+                        src={playlist.images.length > 0 ? (playlist.images.length > 1 ? playlist.images[1].url : playlist.images[0].url) :require('../images/default-image.png') }
+                    />
+                </Figure>
+                </Col>
+                <Col><h3>{playlist.name}</h3></Col>
+            <Col><Button onClick={() => downloadCSV()}>Download Playlist</Button></Col>
+            <Col><Button onClick={() => deleteFromDB()}>Delete From your Collection</Button></Col>
             
-            <div>{readyToRender 
-            && <div>
-            <button onClick={() => downloadCSV()}>Download Playlist</button>
-            <button onClick={() => deleteFromDB()}>Delete From your Collection</button>
-            <h3>{playlist.name}</h3>
-            <div> {playlist
+            </Row>        
+            <Table striped bordered hover variant="dark" className="table-no-margin" >
+                <thead>
+                    <tr> 
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Artists</th>
+                    <th>Album</th>
+                    <th>Release Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {playlist
                 .tracks
-                .map((item : PlaylistTrack) => <div><TrackItem title={item.title} key={item.spotifyUri} artists={item.artists}
-                 album={item.album} albumReleaseDate={item.albumReleaseDate} /></div>)}
-            </div></div>}
-            </div>
+                .map((item : PlaylistTrack, index) => <TrackItem index={index} title={item.title} key={item.spotifyUri} artists={item.artists}
+                 album={item.album} albumReleaseDate={item.albumReleaseDate} />)}
+                     </tbody>
+                 </Table>
+
+            
+            </Container>}
         </div>
     )
 }

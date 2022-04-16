@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 
 
 @Service
-
 public class SpotifyApiService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyApiService.class);
 
@@ -42,12 +41,19 @@ public class SpotifyApiService {
         this.playlistService = playlistService;
     }
 
-    public void createNewSpotifyPlaylist(String title, List<String> uris, String spotifyUserId) {
-        ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
+    public Optional<PlaylistData> createNewSpotifyPlaylist(String title, List<String> uris, String spotifyUserId) throws Exception {
+        try{
+            ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
+            String newPlaylistId = addNewPlaylist(accessTokenResponse.getBody(), title, spotifyUserId);
+            addTracksToNewPlaylist(accessTokenResponse.getBody(), newPlaylistId, uris);
+            PlaylistData playlistData = getPlaylistWithTracks(accessTokenResponse.getBody(), newPlaylistId);
+            playlistData.setSpotifyUserId(spotifyUserId);
+            return playlistService.savePlaylist(playlistData);
+        } catch(Exception e) {
+            LOGGER.info("Could not create Playlist from .csv import", e);
+            throw new Exception(e.getMessage());
+        }
 
-        String newPlaylistId = addNewPlaylist(accessTokenResponse.getBody(), title, spotifyUserId);
-
-        addTracksToNewPlaylist(accessTokenResponse.getBody(), newPlaylistId, uris);
     }
 
     public Optional<PlaylistData> getPlaylistFromSpotify(String id){
@@ -107,8 +113,8 @@ public class SpotifyApiService {
                     SpotifyGetAllUserPlaylistsBody.class
             );
             playlists.addAll(userPlaylistsResponse.getBody().items());
-            hasPlaylistsLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
             i += 1;
+            hasPlaylistsLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
         }
 
         for(SpotifyGetAllUserPlaylistsItems playlist : playlists){

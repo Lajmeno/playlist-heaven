@@ -26,11 +26,14 @@ public class SpotifyApiController {
     }
 
     @PostMapping(value = "/{title}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title, Principal principal) throws IOException {
+    public ResponseEntity<PlaylistDTO> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title, Principal principal) throws IOException {
         Optional<List<String>> uris = playlistCSVService.readCSV(file.getInputStream());
-        if(uris.isPresent()){
-            spotifyApiService.createNewSpotifyPlaylist(title, uris.get(), principal.getName());
-            return ResponseEntity.ok().build();
+        if(uris.isPresent()) {
+            try {
+                return ResponseEntity.of(spotifyApiService.createNewSpotifyPlaylist(title, uris.get(), principal.getName()).map(playlistData -> PlaylistDTO.of(playlistData)));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
         }
         return ResponseEntity.badRequest().build();
     }
@@ -52,7 +55,6 @@ public class SpotifyApiController {
             spotifyApiService.reloadSpotifyPlaylists(principal.getName());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

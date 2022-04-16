@@ -20,3 +20,18 @@
    color: white;
 }
 
+.row-no-margin{
+   margin-bottom: 0px !important; 
+}
+
+.col-no-margin{
+   margin-bottom: 0px !important;
+
+}
+
+.table-no-margin{
+   margin-bottom: 0px !important;
+}
+
+
+

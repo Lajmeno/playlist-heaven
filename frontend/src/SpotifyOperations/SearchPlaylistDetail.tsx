@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { PlaylistsResponse, PlaylistTrack } from "../PlaylistDisplay/PlaylistModel";
 import TrackItem from "../PlaylistDisplay/TrackItem";
@@ -66,12 +66,23 @@ export default function SearchPlaylistDetail(){
             <Row md="auto" className="justify-content-center"><button onClick={() => addToCollectio()}>Add to Collection</button>
             <h3>{playlist.name}</h3>
             </Row>
-            <Row>
+            <Table striped bordered hover variant="dark" className="table-no-margin" >
+                <thead>
+                    <tr> 
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Artists</th>
+                    <th>Album</th>
+                    <th>Release Date</th>
+                    </tr>
+                </thead>
+                <tbody>
             {playlist
                 .tracks
-                .map((item : PlaylistTrack) => <div><TrackItem title={item.title} artists={item.artists}
-                 album={item.album} albumReleaseDate={item.albumReleaseDate} /></div>)}
-                 </Row>
+                .map((item : PlaylistTrack, index) => <TrackItem index={index} title={item.title} artists={item.artists}
+                 album={item.album} albumReleaseDate={item.albumReleaseDate} />)}
+                 </tbody>
+                 </Table>
             </Container>}
             </Container>
         </div>
