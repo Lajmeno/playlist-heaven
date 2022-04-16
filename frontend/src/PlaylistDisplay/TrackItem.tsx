@@ -1,4 +1,3 @@
-import { Col, Container, Row, Table } from "react-bootstrap";
 import './Playlists.css'
 
 
@@ -34,7 +33,7 @@ export default function TrackItem(props:TrackItemProps){
     
     return(
         <tr>
-            <td>{props.index +1}</td>
+            <td>{props.index + 1}</td>
             <td>{props.title}</td>
             <td>{displayArtistsNames(props.artists)}</td>
             <td>{props.album}</td>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Figure, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom"
 import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
 import TrackItem from "./TrackItem";
@@ -86,10 +86,22 @@ export default function PlaylistDetail(){
             {errorMessage && <div>{errorMessage}</div>}     
             {readyToRender 
             && <Container>
+                <Row></Row>
                 <Row>
-            <button onClick={() => downloadCSV()}>Download Playlist</button>
-            <button onClick={() => deleteFromDB()}>Delete From your Collection</button>
-            <h3>{playlist.name}</h3>
+                    <Col>
+                <Figure>
+                    <Figure.Image
+                        width={221}
+                        height={240}
+                        alt="171x180"
+                        src={playlist.images.length > 0 ? (playlist.images.length > 1 ? playlist.images[1].url : playlist.images[0].url) :require('../images/default-image.png') }
+                    />
+                </Figure>
+                </Col>
+                <Col><h3>{playlist.name}</h3></Col>
+            <Col><Button onClick={() => downloadCSV()}>Download Playlist</Button></Col>
+            <Col><Button onClick={() => deleteFromDB()}>Delete From your Collection</Button></Col>
+            
             </Row>        
             <Table striped bordered hover variant="dark" className="table-no-margin" >
                 <thead>
