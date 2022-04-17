@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Figure, Row, Table } from "react-bootstrap";
-import { ArrowClockwise, Download, Heart } from "react-bootstrap-icons";
+import { ArrowClockwise} from "react-bootstrap-icons";
 import { useNavigate, useParams } from "react-router-dom"
 import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
 import TrackItem from "./TrackItem";
@@ -84,7 +84,6 @@ export default function PlaylistDetail(){
         fetch(`${process.env.REACT_APP_BASE_URL}/api/spotify/${params.id}`, {
             method: "PUT",
             headers:{
-                'Content-Type': 'application/json',
                 "Authorization": "Bearer"+ localStorage.getItem("jwt")
             }
         })
