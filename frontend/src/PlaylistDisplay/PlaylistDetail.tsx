@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Figure, Row, Table } from "react-bootstrap";
+import { ArrowClockwise, Download, Heart } from "react-bootstrap-icons";
 import { useNavigate, useParams } from "react-router-dom"
 import { PlaylistsResponse, PlaylistTrack } from "./PlaylistModel";
 import TrackItem from "./TrackItem";
@@ -79,6 +80,24 @@ export default function PlaylistDetail(){
         .catch((e) => {setErrorMessage(e.message)})
     } 
 
+    const reloadPlaylist = () => {
+        fetch(`${process.env.REACT_APP_BASE_URL}/api/spotify/${params.id}`, {
+            method: "PUT",
+            headers:{
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer"+ localStorage.getItem("jwt")
+            }
+        })
+        .then(response => {
+            if(!(response.status === 400)){
+                return response.json();
+            }
+            throw new Error("Playlist could not be reloaded from Spotify");
+        })
+        .then(responseBody => setPlaylist(responseBody))
+        .catch((e) => {setErrorMessage(e.message)})
+    }
+
 
     return(
         <div>
@@ -87,39 +106,48 @@ export default function PlaylistDetail(){
             {readyToRender 
             && <Container>
                 <Row></Row>
-                <Row>
-                    <Col>
-                <Figure>
-                    <Figure.Image
-                        width={221}
-                        height={240}
-                        alt="171x180"
-                        src={playlist.images.length > 0 ? (playlist.images.length > 1 ? playlist.images[1].url : playlist.images[0].url) :require('../images/default-image.png') }
-                    />
-                </Figure>
-                </Col>
-                <Col><h3>{playlist.name}</h3></Col>
-            <Col><Button onClick={() => downloadCSV()}>Download Playlist</Button></Col>
-            <Col><Button onClick={() => deleteFromDB()}>Delete From your Collection</Button></Col>
-            
-            </Row>        
-            <Table striped bordered hover variant="dark" className="table-no-margin" >
-                <thead>
-                    <tr> 
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Artists</th>
-                    <th>Album</th>
-                    <th>Release Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {playlist
-                .tracks
-                .map((item : PlaylistTrack, index) => <TrackItem index={index} title={item.title} key={item.spotifyUri} artists={item.artists}
-                 album={item.album} albumReleaseDate={item.albumReleaseDate} />)}
-                     </tbody>
-                 </Table>
+                <Row className="row-no-margin">
+                    <Col md={{ span: 4, offset: 0 }}>
+                        <Figure>
+                            <Figure.Image
+                                width={321}
+                                height={340}
+                                alt="playlist-image"
+                                src={playlist.images.length > 0 ? (playlist.images.length > 1 ? playlist.images[1].url : playlist.images[0].url) :require('../images/default-image.png') }
+                            />
+                        </Figure>
+                    </Col>
+                    <Col md={{ span: 5, offset: 0 }}><h3>{playlist.name}</h3></Col>
+                    <Col></Col>
+                    <Col xs={{ order: 'last' }}>
+                        <Row><Button onClick={() => downloadCSV()}>Download</Button></Row>
+                        <Row><Button onClick={() => deleteFromDB()}>Delete</Button></Row>
+                    </Col>
+                    
+                </Row>   
+                <Row className="row-little-margin">
+                    <Col xl={{ span: 2, offset: 4, order: 'last' }}>
+                        <Button variant="warning" onClick={() => reloadPlaylist()}><ArrowClockwise /> Reload</Button>
+                    </Col>
+                    
+                </Row>     
+                <Table striped bordered hover variant="dark" className="table-no-margin" >
+                    <thead>
+                        <tr> 
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Artists</th>
+                        <th>Album</th>
+                        <th>Release Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {playlist
+                    .tracks
+                    .map((item : PlaylistTrack, index) => <TrackItem index={index} title={item.title} key={item.spotifyUri} artists={item.artists}
+                    album={item.album} albumReleaseDate={item.albumReleaseDate} />)}
+                        </tbody>
+                </Table>
 
             
             </Container>}

@@ -24,6 +24,10 @@
    margin-bottom: 0px !important; 
 }
 
+.row-little-margin{
+   margin-bottom: 4px !important; 
+}
+
 .col-no-margin{
    margin-bottom: 0px !important;
 
