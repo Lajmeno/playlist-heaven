@@ -7,6 +7,8 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class PlaylistServiceTest {
@@ -35,6 +37,18 @@ class PlaylistServiceTest {
 
         verify(repository, times(1)).delete(playlist1);
         assertThat(actual).isEqualTo(Optional.of(playlist1));
+    }
+
+    @Test
+    void shouldNotOverrideNonExistingPlaylist(){
+        PlaylistData playlist1 = PlaylistData.builder().spotifyId("1").spotifyUserId("2").build();
+        PlaylistRepository repository = Mockito.mock(PlaylistRepository.class);
+        PlaylistService service = new PlaylistService(repository);
+
+        when(repository.findBySpotifyIdAndSpotifyUserId("1", "2")).thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(NoSuchFieldException.class, () -> service.overridePlaylist(playlist1));
+        assertEquals("Could not find requested playlist to override.", exception.getMessage());
     }
 
 }

@@ -101,6 +101,18 @@ public class SpotifyApiService {
 
     }
 
+    public PlaylistData reloadPlaylistFromSpotify(String id, String spotifyUserId) throws Exception {
+        ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
+        try {
+            PlaylistData playlistData = getPlaylistWithTracks(accessTokenResponse.getBody(), id);
+            playlistData.setSpotifyUserId(spotifyUserId);
+            return playlistService.overridePlaylist(playlistData);
+        }catch (Exception e) {
+            LOGGER.info("Playlist could not be found", e);
+            throw new Exception();
+        }
+    }
+
     public void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, String spotifyUserId) {
         List<SpotifyGetAllUserPlaylistsItems> playlists = new ArrayList<>();
         boolean hasPlaylistsLeftToGet = true;
@@ -225,4 +237,5 @@ public class SpotifyApiService {
             set( "Authorization", authHeader );
         }};
     }
+
 }

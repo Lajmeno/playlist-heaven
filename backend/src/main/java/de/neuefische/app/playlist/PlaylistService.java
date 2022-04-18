@@ -21,6 +21,15 @@ public class PlaylistService {
         return Optional.empty();
     }
 
+    public PlaylistData overridePlaylist(PlaylistData playlistData) throws NoSuchFieldException {
+        Optional<PlaylistData> playlistFromRepo = playlistRepository.findBySpotifyIdAndSpotifyUserId(playlistData.getSpotifyId(),  playlistData.getSpotifyUserId());
+        if(playlistFromRepo.isPresent()){
+            playlistData.setId(playlistFromRepo.get().getId());
+            return playlistRepository.save(playlistData);
+        }
+        throw new NoSuchFieldException("Could not find requested playlist to override.");
+    }
+
     public List<PlaylistData> getUserPlaylists(String spotifyUserId) {
         return playlistRepository.findBySpotifyUserId(spotifyUserId);
     }

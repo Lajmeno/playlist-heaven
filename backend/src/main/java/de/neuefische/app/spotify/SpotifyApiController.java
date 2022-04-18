@@ -30,7 +30,9 @@ public class SpotifyApiController {
         Optional<List<String>> uris = playlistCSVService.readCSV(file.getInputStream());
         if(uris.isPresent()) {
             try {
-                return ResponseEntity.of(spotifyApiService.createNewSpotifyPlaylist(title, uris.get(), principal.getName()).map(playlistData -> PlaylistDTO.of(playlistData)));
+                return ResponseEntity
+                        .of(spotifyApiService.createNewSpotifyPlaylist(title, uris.get(), principal.getName())
+                        .map(playlistData -> PlaylistDTO.of(playlistData)));
             } catch (Exception e) {
                 return ResponseEntity.badRequest().build();
             }
@@ -41,12 +43,16 @@ public class SpotifyApiController {
     @GetMapping("/{id}")
     public ResponseEntity<PlaylistDTO> getPlaylistFromSpotify(@PathVariable String id){
         Optional<PlaylistData> playlistData = spotifyApiService.getPlaylistFromSpotify(id);
-        return playlistData.map(data -> ResponseEntity.ok().body(PlaylistDTO.of(data))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return playlistData
+                .map(data -> ResponseEntity.ok().body(PlaylistDTO.of(data)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .build());
     }
 
     @GetMapping("/search/{value}")
     public List<PlaylistDTO> searchPlaylists(@PathVariable String value){
-        return spotifyApiService.searchPlaylists(value).stream().map(playlist -> PlaylistDTO.of(playlist)).toList();
+        return spotifyApiService.searchPlaylists(value).stream()
+                .map(playlist -> PlaylistDTO.of(playlist)).toList();
     }
 
     @GetMapping
@@ -56,6 +62,17 @@ public class SpotifyApiController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PlaylistDTO> reloadPlaylistById(@PathVariable String id, Principal principal){
+        try{
+            return ResponseEntity
+                    .ok()
+                    .body(PlaylistDTO.of(spotifyApiService.reloadPlaylistFromSpotify(id, principal.getName())));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

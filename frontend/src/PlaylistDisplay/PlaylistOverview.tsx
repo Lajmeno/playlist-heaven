@@ -41,11 +41,10 @@ export default function PlaylistOverview() {
         .catch(e => setErrorMessage(e.message));
     }, [searchValue]);
 
-    useEffect(() => {
+     useEffect(() => {
         fetchAll();
     }, [fetchAll])
 
-   
 
     const reloadPlaylists = () => {
         fetch(`${process.env.REACT_APP_BASE_URL}/api/spotify`, {
