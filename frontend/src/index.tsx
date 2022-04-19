@@ -10,22 +10,21 @@ import reportWebVitals from './reportWebVitals';
 import SearchPlaylistDetail from './SpotifyOperations/SearchPlaylistDetail';
 import CreateSpotifyPlaylist from './SpotifyOperations/CreateSpotifyPlaylist';
 import './custom.scss'
-import './index.css'
 
 ReactDOM.render(
     <React.StrictMode>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/" element={<App />}>
-            <Route path="/overview" element={<PlaylistOverview/>} />
-            <Route path="/overview/:id" element={<PlaylistDetail/>} />
-            <Route path="/search" element={<SpotifySearch/>} />
-            <Route path="/search/:id" element={<SearchPlaylistDetail/>} />
-            <Route path="/create" element={<CreateSpotifyPlaylist/>}/>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login/>} />
+            <Route path="/" element={<App />}>
+              <Route path="/overview" element={<PlaylistOverview/>} />
+              <Route path="/overview/:id" element={<PlaylistDetail/>} />
+              <Route path="/search" element={<SpotifySearch/>} />
+              <Route path="/search/:id" element={<SearchPlaylistDetail/>} />
+              <Route path="/create" element={<CreateSpotifyPlaylist/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
     </React.StrictMode>,
   document.getElementById('root')
 );

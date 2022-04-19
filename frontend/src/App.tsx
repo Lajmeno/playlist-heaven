@@ -9,7 +9,7 @@ function App() {
 
     return (
         <Suspense fallback="loading..">
-            <Container className="bg-background">
+            <Container>
                 <Header />
                 <NavigationBar />
                 <Outlet />

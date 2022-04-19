@@ -52,6 +52,7 @@ export default function SpotifySearch(){
                     <Col md={{ span: 4, offset: 4 }}>
                         <InputGroup className="mb-3" >
                             <FormControl
+                            className="bg-light text-black"
                             value={searchValue}
                             onChange={v => {
                                 setSearchValue(v.target.value);

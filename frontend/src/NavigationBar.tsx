@@ -1,6 +1,5 @@
 import { Col, Container, Figure, Nav, Navbar, Row} from "react-bootstrap";
 import { useLocation} from "react-router-dom";
-import './NavigationBar.css';
 
 
 export default function NavigationBar(){
@@ -14,19 +13,17 @@ export default function NavigationBar(){
   const splitLocation = pathname.split("/");
 
   return(
-      
-     
-          <Container>
+    <Container>
             <Row>
               <Col xl={{span: 2, offset: 0}}>
-              <Figure>
-                            <Figure.Image
-                                width={171}
-                                height={180}
-                                alt="171x180"
-                                src={require("./images/logo.png")}
-                            />
-                        </Figure>
+                <Figure>
+                  <Figure.Image
+                      width={171}
+                      height={180}
+                      alt="171x180"
+                      src={require("./images/logo.png")}
+                  />
+                </Figure>
               </Col>
               <Col xl={{span: 0, offset: 0}}>
                 <Row></Row>
@@ -43,17 +40,15 @@ export default function NavigationBar(){
               <Nav.Link className={splitLocation[1] === "create" ? "active" : ""} href="/create">Create</Nav.Link>
               </Nav>
               <Navbar.Collapse className="justify-content-end">
-        <Nav>
-          <Nav.Link onClick={() => logout()} href="/login">Logout</Nav.Link>
-          <Nav.Link href="/login">Login</Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-      </Navbar>
-      </Row>
-      </Col>
-      </Row>
-          </Container>
-      
-    
-);
+            <Nav>
+              <Nav.Link onClick={() => logout()} href="/login">Logout</Nav.Link>
+              <Nav.Link href="/login">Login</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+          </Navbar>
+          </Row>
+          </Col>
+          </Row>
+      </Container> 
+  );
 }

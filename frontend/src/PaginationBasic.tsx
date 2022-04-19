@@ -1,6 +1,5 @@
 
 import { Pagination } from "react-bootstrap";
-import './index.css';
 
 interface Amount {
     amount :number
@@ -16,7 +15,7 @@ export default function PaginationBasic(props:Amount){
     let items = [];
     for (let number = 1; number <= props.amount; number++) {
         items.push(
-        <Pagination.Item className="text-secondary"  onClick={() => props.setPage(number)} key={number} active={number === props.page}>
+        <Pagination.Item  onClick={() => props.setPage(number)} key={number} active={number === props.page}>
         {number}
         </Pagination.Item>
         );
