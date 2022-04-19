@@ -1,4 +1,4 @@
-package de.neuefische.app.spotify;
+package de.neuefische.app.spotify.oauth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

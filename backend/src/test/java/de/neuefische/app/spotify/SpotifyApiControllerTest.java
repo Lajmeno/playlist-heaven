@@ -5,6 +5,7 @@ import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.data.PlaylistTrack;
 import de.neuefische.app.security.JwtService;
+import de.neuefische.app.spotify.oauth.SpotifyGetAccessTokenBody;
 import de.neuefische.app.spotify.playlistresponse.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
