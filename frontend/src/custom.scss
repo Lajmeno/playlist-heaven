@@ -1,15 +1,15 @@
 // change the theme
-$primary: #BD4B4B;
-$secondary: #8f5325;
+$primary: #84C69B;
+$secondary: #0d5c99;
 $success: #3e8d63;
 $info: #7854e4;
 $warning: #ffc107;
 $danger: #d62518;
 $light: #f8f9fa;
-$dark: #2d3338;
+$dark: #2e2f30;
 
 //custom color to be mapped
-$accent : #da6d25;
+$background : #1d1e1f;
 
 // this is used to map colors. change accordingly.
 $theme-colors: (
@@ -22,7 +22,7 @@ $theme-colors: (
   light: $light,
   dark: $dark,
 // add any additional color below
-  accent: $accent,
+  background: $background,
 // now bg-accent,btn-accent,etc.. can be called
 );
 

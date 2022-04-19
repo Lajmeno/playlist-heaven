@@ -106,18 +106,18 @@ export default function PlaylistDetail(){
             && <Container>
                 <Row></Row>
                 <Row className="mb-0" xs="auto" md={4} lg={12}>
-                    <Col xl={{ span: 4, offset: 0 }}>
+                    <Col xl={{ span: 3, offset: 0 }}>
                         <Figure>
                             <Figure.Image
-                                width={421}
-                                height={440}
+                                width={321}
+                                height={340}
                                 alt="playlist-image"
                                 src={playlist.images.length > 0 ? (playlist.images.length > 1 ? playlist.images[1].url : playlist.images[0].url) :require('../images/default-image.png') }
                             />
                         </Figure>
                     </Col>
                     <Col lg={{ span: 4, offset: 0 }}><h2>{playlist.name}</h2></Col>
-                    <Col lg={{ span: 1, offset: 3 }}>
+                    <Col lg={{ span: 1, offset: 4 }}>
                         <Row><Button onClick={() => downloadCSV()}>Download</Button></Row>
                         <Row><Button onClick={() => deleteFromDB()}>Delete</Button></Row>
                     </Col>

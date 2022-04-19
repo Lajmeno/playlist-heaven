@@ -1,4 +1,4 @@
-import { Button, Col, Container, Figure, Row } from "react-bootstrap";
+import { Button, Container, Figure, Row } from "react-bootstrap";
 import './Login.css'
 
 

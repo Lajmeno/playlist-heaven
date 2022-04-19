@@ -1,4 +1,4 @@
-import { Container, Nav, Navbar} from "react-bootstrap";
+import { Col, Container, Figure, Nav, Navbar, Row} from "react-bootstrap";
 import { useLocation} from "react-router-dom";
 import './NavigationBar.css';
 
@@ -15,9 +15,28 @@ export default function NavigationBar(){
 
   return(
       
-      <Navbar bg="dark" variant="dark">
+     
           <Container>
-              <Navbar.Brand className="" href="/">PlaylistHeaven</Navbar.Brand>
+            <Row>
+              <Col xl={{span: 2, offset: 0}}>
+              <Figure>
+                            <Figure.Image
+                                width={171}
+                                height={180}
+                                alt="171x180"
+                                src={require("./images/logo.png")}
+                            />
+                        </Figure>
+              </Col>
+              <Col xl={{span: 0, offset: 0}}>
+                <Row></Row>
+                <Row></Row>
+                <Row></Row>
+                <Row>
+              <Navbar bg="dark" variant="dark">
+                  <Navbar.Brand className="" href="/">
+                  </Navbar.Brand>
+              
               <Nav className="me-auto">
               <Nav.Link className={splitLocation[1] === "overview" ? "active" : ""} href="/overview">Overview</Nav.Link>
               <Nav.Link  className={splitLocation[1] === "search" ? "active" : ""} href="/search">Search</Nav.Link>
@@ -29,8 +48,12 @@ export default function NavigationBar(){
           <Nav.Link href="/login">Login</Nav.Link>
         </Nav>
       </Navbar.Collapse>
-          </Container>
       </Navbar>
+      </Row>
+      </Col>
+      </Row>
+          </Container>
+      
     
 );
 }

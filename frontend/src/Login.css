@@ -7,7 +7,6 @@
   }
 
   .login-header {
-    background-color: rgb(21, 21, 21);
     min-height: 80vh;
     display: flex;
     flex-direction: column;

@@ -1,5 +1,10 @@
 
 body{
-    background-color: rgb(21, 21, 21);
+    background-color: #1A2F4B;
     color: #ffff;
 }
+
+.header {
+    text-align: center;
+}
+
