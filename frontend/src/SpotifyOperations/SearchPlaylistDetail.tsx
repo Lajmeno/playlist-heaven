@@ -79,7 +79,7 @@ export default function SearchPlaylistDetail(){
                         <Row><h2>{playlist.name}</h2></Row>
                         <Row><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank" rel="noreferrer noopener" ><Button>Open in Spotify</Button></a></Row>
                     </Col>
-                    <Col lg={{ span: 1, offset: 4 }}>
+                    <Col xl={{ span: "auto", offset: 3 }}>
                         <Row><Button onClick={() => addToCollectio()}>Add to Collection</Button></Row>
                     </Col>
                 </Row>   

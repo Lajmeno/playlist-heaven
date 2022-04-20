@@ -26,13 +26,10 @@ export default function CreateSpotifyPlaylist() {
         })
         .then(() => {
             setErrorMessage('');
-            //props.onItemCreate()
         })
         .catch(error => {
-            if (error.response.status === 422) {
-                setErrorMessage('Nicht alle Einträge konnten importiert weren. Guck ins Log!!!');
-            } else if (error.response.status === 400) {
-                setErrorMessage('Die Einträge wurde nicht importiert. Guck ins Log!!!');
+            if (error.response.status === 400) {
+                setErrorMessage('Playlist could not be uploaded. Please check the Log.');
             }
         })
     };

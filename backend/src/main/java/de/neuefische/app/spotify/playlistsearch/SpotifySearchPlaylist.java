@@ -7,6 +7,7 @@ import java.util.List;
 public record SpotifySearchPlaylist(
         @JsonProperty("name") String name,
         @JsonProperty("id") String id,
-        @JsonProperty("images") List<SpotifySearchPlaylistImages> images
+        @JsonProperty("images") List<SpotifySearchPlaylistImages> images,
+        @JsonProperty("owner") SpotifySearchPlaylistOwner owner
 ) {
 }

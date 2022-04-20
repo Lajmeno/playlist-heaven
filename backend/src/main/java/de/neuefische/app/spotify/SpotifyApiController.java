@@ -7,7 +7,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +25,32 @@ public class SpotifyApiController {
     }
 
     @PostMapping(value = "/{title}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PlaylistDTO> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title, Principal principal) throws IOException {
-        Optional<List<String>> uris = playlistCSVService.readCSV(file.getInputStream());
-        if(uris.isPresent()) {
+    public ResponseEntity<PlaylistDTO> exportCSVToSpotify(@RequestParam("csv") MultipartFile file, @PathVariable String title, Principal principal) throws Exception {
+        List<String> uris = playlistCSVService.readCSV(file.getInputStream());
+        if(uris.size() > 0) {
             try {
                 return ResponseEntity
-                        .of(spotifyApiService.createNewSpotifyPlaylist(title, uris.get(), principal.getName())
+                        .of(spotifyApiService.createNewSpotifyPlaylist(title, uris, principal.getName())
                         .map(playlistData -> PlaylistDTO.of(playlistData)));
             } catch (Exception e) {
                 return ResponseEntity.badRequest().build();
+            }
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PatchMapping(value = "/{id}/{ownerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PlaylistDTO> restorePlaylistFromCSV(@RequestParam("csv") MultipartFile file, @PathVariable String id, @PathVariable String ownerId, Principal principal) throws Exception {
+        if(ownerId.equals(principal.getName())){
+            List<String> uris = playlistCSVService.readCSV(file.getInputStream());
+            if(uris.size()>0) {
+                try {
+                    return ResponseEntity
+                            .of(spotifyApiService.restorePlaylist(id, uris, principal.getName())
+                                    .map(playlistData -> PlaylistDTO.of(playlistData)));
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().build();
+                }
             }
         }
         return ResponseEntity.badRequest().build();

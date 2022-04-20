@@ -79,7 +79,7 @@ class SpotifyApiControllerTest {
                 .map(image -> PlaylistImage.of(image))
                 .toList();
 
-        PlaylistData playlistData = new PlaylistData(null, playlistResponse.getBody().name(), playlistResponse.getBody().id(), playlistTracks, images, spotifyUserId);
+        PlaylistData playlistData = new PlaylistData(null, playlistResponse.getBody().name(), playlistResponse.getBody().id(), playlistTracks, images, spotifyUserId, null);
 
         when(playlistRepository.save(playlistData)).thenReturn(playlistData);
 
