@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { Button, Col, Container, FormControl, InputGroup, Row } from "react-bootstrap";
 
 
 
@@ -37,16 +38,33 @@ export default function CreateSpotifyPlaylist() {
     };
 
     return(
-        <div>
+        <Container>
+            <Row md="auto" className="justify-content-center">
             <h2>Create Spotify Playlist from CSV</h2>
-
-            <input type="text" placeholder="Playlist Title" value={playlistTitle} onChange={ev => setPlaylistTitle(ev.target.value)}  />
-
-            <div>
-                <input type="file" onChange={ev => setFile(ev.target.files![0])} />
-            </div>
-            <div><button onClick={() => performFileUpload(file)}>Add to Collection</button></div>
-            {errorMessage && {errorMessage}}
-        </div>
+            </Row>
+            <Row md="auto" className="justify-content-center">
+                <Col  md={{ span: 3, offset: 0 }}>
+                <InputGroup className="mb-3" >
+                                <FormControl
+                                className="bg-light text-black"
+                                value={playlistTitle}
+                                onChange={ev => setPlaylistTitle(ev.target.value)}
+                                placeholder="Playlist Title"
+                                aria-label="Search"
+                                aria-describedby="inputGroup-sizing-default"
+                                />
+                            </InputGroup>
+                        </Col>
+            </Row>
+            <Row lg="auto" className="justify-content-center">
+                <Col  md={{ span: 2, offset: 2 }}>
+                    <input type="file" onChange={ev => setFile(ev.target.files![0])} />
+                </Col>
+            </Row>
+            <Row md="auto" className="justify-content-center">
+                <Button onClick={() => performFileUpload(file)}>Add to Collection</Button>
+                {errorMessage && {errorMessage}}
+            </Row>
+        </Container>
     )
 }

@@ -1,7 +1,8 @@
-package de.neuefische.app.spotify;
+package de.neuefische.app.spotify.oauth;
 
 
 import de.neuefische.app.security.JwtService;
+import de.neuefische.app.spotify.SpotifyApiService;
 import de.neuefische.app.spotify.playlistresponse.SpotifyRefreshToken;
 import de.neuefische.app.user.UserDocument;
 import de.neuefische.app.user.UserService;

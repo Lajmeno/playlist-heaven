@@ -1,11 +1,13 @@
+import { Col, Row } from "react-bootstrap";
 
 
 export default function Header(){
     return(
-        <div>
-            <h1>
-                Playlist Heaven
-            </h1>
-        </div>
+            <Row className="mb-0">
+                <Col className="mb-0">
+
+                </Col>
+            </Row>
+        
     )
 }

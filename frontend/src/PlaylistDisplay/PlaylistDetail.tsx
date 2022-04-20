@@ -105,8 +105,8 @@ export default function PlaylistDetail(){
             {readyToRender 
             && <Container>
                 <Row></Row>
-                <Row className="row-no-margin">
-                    <Col md={{ span: 4, offset: 0 }}>
+                <Row className="mb-0" xs="auto" md={4} lg={12}>
+                    <Col xl={{ span: 3, offset: 0 }}>
                         <Figure>
                             <Figure.Image
                                 width={321}
@@ -116,21 +116,20 @@ export default function PlaylistDetail(){
                             />
                         </Figure>
                     </Col>
-                    <Col md={{ span: 5, offset: 0 }}><h3>{playlist.name}</h3></Col>
-                    <Col></Col>
-                    <Col xs={{ order: 'last' }}>
+                    <Col lg={{ span: 4, offset: 0 }}><h2>{playlist.name}</h2></Col>
+                    <Col lg={{ span: 1, offset: 4 }}>
                         <Row><Button onClick={() => downloadCSV()}>Download</Button></Row>
                         <Row><Button onClick={() => deleteFromDB()}>Delete</Button></Row>
                     </Col>
                     
                 </Row>   
-                <Row className="row-little-margin">
-                    <Col xl={{ span: 2, offset: 4, order: 'last' }}>
+                <Row className="mb-2">
+                    <Col xl={{span: 11, offset: 0}}></Col>
+                    <Col xl={{ span: 1, offset: 0 }}>
                         <Button variant="warning" onClick={() => reloadPlaylist()}><ArrowClockwise /> Reload</Button>
-                    </Col>
-                    
+                    </Col>  
                 </Row>     
-                <Table striped bordered hover variant="dark" className="table-no-margin" >
+                <Table striped bordered hover variant="dark" >
                     <thead>
                         <tr> 
                         <th>#</th>
