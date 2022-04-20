@@ -1,22 +1,12 @@
-# spring-boot-react-bundle
+![Logo](frontend/src/images/logo.png?raw=true "Title")
 
-This is a demo project that shows how it is possible to deploy a react frontend and a Spring Boot backend into a heroku dyno. The following paragraphs describe the actions you need to perform.
+This app can store your precious playlists that you have created and collected over the years on Spotify. After signing in through Spotify (OAuth), all your playlists will be retrieved from Spotify and stored in the app. Your collection of playlists can be searched here and more can be added through a Spotify search from within the app. The playlists can also be downloaded as .csv afterwards. These can in turn be used for backup purposes, to restore a playlist to its previous state, or to simply create new playlists on Spotify from within the app using a .csv files.
 
-## Creating an heroku app
-When creating the heroku app I recommend to use the heroku cli. Use the following commands to create the app and add the required buildpack.
-* `heroku create <your-app-name>`
-* `heroku buildpacks:set heroku/java --app=<your-app-name>`
+In Playlist-Heaven, you have a safe space to keep your playlists. This way you won't have to worry about your account or membership. Still, the app stays connected to be able to update its data or to simply open playlists in Spotify with just a click.
 
-## Project structure
+## TechStack
 
-The project consists of to sub projects. The react project is located in the frontend directory and the Spring Boot project in the backend directory. To let heroku know that the main project is the Spring Boot project, there is a parent pom.xml in the root directory. That way, when heroku builds checks out the code and starts the build the parent pom and the backend module are built.<br />
-To let heroku know that the jar file is now in the target directory of the backend, the `Procfile` is needed.
+* Backend: Java, Spring, MongoDB, JUnit, Mockito
+* Frontend: TypeScript, React, Bootstrap
+* Others: SpotifyApi, Heroku
 
-## Bundling the frontend into the backend jar
-
-The frontend project is built using the `com.github.eirslett:frontend-maven-plugin`. The `maven-resources-plugin` is used to copy the content of the resulting `build` directory to the backend's `target/classes/static` directory.<br />
-
-## Deployment to heroku
-
-Just connect your heroku app and yout GitHub repository on the heroku app's "Deploy"-tab.
-# playlist-heaven
