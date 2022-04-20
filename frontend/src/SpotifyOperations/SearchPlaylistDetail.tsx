@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Figure, Row, Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { PlaylistsResponse, PlaylistTrack } from "../PlaylistDisplay/PlaylistModel";
 import TrackItem from "../PlaylistDisplay/TrackItem";
@@ -63,9 +63,27 @@ export default function SearchPlaylistDetail(){
             
             <Container>{readyToRender 
             && <Container>
-            <Row md="auto" className="justify-content-center"><button onClick={() => addToCollectio()}>Add to Collection</button>
-            <h3>{playlist.name}</h3>
-            </Row>
+            <Row></Row>
+                <Row className="mb-0" xs="auto" md={4} lg={12}>
+                    <Col xl={{ span: 3, offset: 0 }}>
+                        <Figure>
+                            <Figure.Image
+                                width={321}
+                                height={340}
+                                alt="playlist-image"
+                                src={playlist.images.length > 0 ? (playlist.images.length > 1 ? playlist.images[1].url : playlist.images[0].url) :require('../images/default-image.png') }
+                            />
+                        </Figure>
+                    </Col>
+                    <Col lg={{ span: 4, offset: 0 }}>
+                        <Row><h2>{playlist.name}</h2></Row>
+                        <Row><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank"><Button>Open in Spotify</Button></a></Row>
+                    </Col>
+                    <Col lg={{ span: 1, offset: 4 }}>
+                        <Row><Button onClick={() => addToCollectio()}>Add to Collection</Button></Row>
+                    </Col>
+                    
+                </Row>   
             <Table striped bordered hover variant="dark" className="table-no-margin" >
                 <thead>
                     <tr> 
