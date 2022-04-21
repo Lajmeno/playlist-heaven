@@ -46,10 +46,24 @@ public class SpotifyApiService {
         try{
             ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
             String newPlaylistId = addNewPlaylist(accessTokenResponse.getBody(), title, spotifyUserId);
-            addTracksToNewPlaylist(accessTokenResponse.getBody(), newPlaylistId, uris);
+            addTracksToPlaylist(accessTokenResponse.getBody(), newPlaylistId, uris, HttpMethod.POST);
             PlaylistData playlistData = getPlaylistWithTracks(accessTokenResponse.getBody(), newPlaylistId);
             playlistData.setSpotifyUserId(spotifyUserId);
             return playlistService.savePlaylist(playlistData);
+        } catch(Exception e) {
+            LOGGER.info("Could not create Playlist from .csv import", e);
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
+    public Optional<PlaylistData> restorePlaylist(String id, List<String> uris, String spotifyUserId) throws Exception {
+        try{
+            ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
+            addTracksToPlaylist(accessTokenResponse.getBody(), id, uris, HttpMethod.PUT);
+            PlaylistData playlistData = getPlaylistWithTracks(accessTokenResponse.getBody(), id);
+            playlistData.setSpotifyUserId(spotifyUserId);
+            return Optional.ofNullable(playlistService.overridePlaylist(playlistData));
         } catch(Exception e) {
             LOGGER.info("Could not create Playlist from .csv import", e);
             throw new Exception(e.getMessage());
@@ -76,7 +90,7 @@ public class SpotifyApiService {
     }
 
 
-    private void addTracksToNewPlaylist(SpotifyGetAccessTokenBody accessTokenResponse, String playlistId, List<String> uris){
+    private void addTracksToPlaylist(SpotifyGetAccessTokenBody accessTokenResponse, String playlistId, List<String> uris, HttpMethod httpMethod){
         List<PlaylistTracksRequest> uriPartitions = divideUris(uris);
         HttpHeaders headers = createHeaders(accessTokenResponse.accessToken());
         for(PlaylistTracksRequest uriChunks : uriPartitions){
@@ -84,7 +98,7 @@ public class SpotifyApiService {
             HttpEntity<PlaylistTracksRequest> request = new HttpEntity<>(uriChunks, headers);
             ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
                     "https://api.spotify.com/v1/playlists/" + playlistId +"/tracks",
-                    HttpMethod.POST,
+                    httpMethod,
                     request,
                     SpotifyGetPlaylistBody.class
             );
@@ -175,7 +189,7 @@ public class SpotifyApiService {
             urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
             hasMoreTracksToGet = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
         }
-        return new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null);
+        return new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null, responseBody.owner().id());
     }
 
     private List<PlaylistTracksRequest> divideUris(List<String> uris){

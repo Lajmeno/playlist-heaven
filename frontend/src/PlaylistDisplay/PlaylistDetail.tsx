@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Figure, Row, Table } from "react-bootstrap";
 import { ArrowClockwise} from "react-bootstrap-icons";
@@ -10,15 +11,26 @@ export default function PlaylistDetail(){
 
     const params = useParams();
 
+    const [userId, setUserId] = useState("");
+
     const [playlist, setPlaylist] = useState({} as PlaylistsResponse);
 
-    const[readyToRender, setReadyToRender] = useState(false);
+    const [file, setFile] = useState({} as File)
+
+    const [readyToRender, setReadyToRender] = useState(false);
+
+    const [restoreWindow, setRestoreWindow] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
 
     const nav = useNavigate();
 
     useEffect(() => {
+        let jwt = localStorage.getItem("jwt");
+        if (jwt){
+            const tokenDetails = JSON.parse(window.atob(jwt.split('.')[1]));
+            setUserId(tokenDetails.sub);
+        }
         fetch(`${process.env.REACT_APP_BASE_URL}/api/playlists/${params.id}`, {
             headers:{
                 "Authorization": "Bearer"+ localStorage.getItem("jwt")
@@ -97,13 +109,41 @@ export default function PlaylistDetail(){
         .catch((e) => {setErrorMessage(e.message)})
     }
 
+    const restoreFromCSV = (file: File | null) => {
+        const fileData = new FormData();
+        fileData.append('csv', file!);
+
+        axios.patch(`${process.env.REACT_APP_BASE_URL}/api/spotify/${playlist.spotifyId}/${playlist.spotifyOwnerId}`, fileData, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+                'Content-Type': 'multipart/form-data'
+            },
+            onUploadProgress:progressEvent => {
+                console.log("Uploading : " + ((progressEvent.loaded / progressEvent.total) * 100).toString() + "%")
+            }
+        })
+        .then(response => {
+            if(response.status === 200){
+                setPlaylist(response.data);
+            }
+        })
+        .then(() => {
+            setErrorMessage('');
+        })
+        .catch(error => {
+            if (error.response.status === 400) {
+                setErrorMessage('Playlist could not be restored. Please check the Log.');
+            }
+        })
+    };
+
 
     return(
         <div>
             
             {errorMessage && <div>{errorMessage}</div>}     
             {readyToRender 
-            && <Container>
+            && <Container className="p-0">
                 <Row></Row>
                 <Row className="mb-0" xs="auto" md={4} lg={12}>
                     <Col xl={{ span: 3, offset: 0 }}>
@@ -117,18 +157,29 @@ export default function PlaylistDetail(){
                         </Figure>
                     </Col>
                     <Col lg={{ span: 4, offset: 0 }}>
-                        <Row><h2>{playlist.name}</h2></Row>
-                        <Row><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank" rel="noreferrer noopener" ><Button>Open in Spotify</Button></a></Row>
+                        <Row className="mb-5"><h2>{playlist.name}</h2></Row>
+                        <Row className="mb-5"><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank" rel="noreferrer noopener" ><Button>Open in Spotify</Button></a></Row>
+                        <Row>{playlist.spotifyOwnerId === userId &&
+                        <Col className="mb-10" md={{ span: 4, offset: 0 }}>
+                            <Button className="mab-1" onClick={() => restoreWindow === true ? setRestoreWindow(false) : setRestoreWindow(true) }>Restore</Button>
+                            </Col>}
+                           </Row>
+                           <Row className="bg-background">
+                            {restoreWindow && <Row>
+                                <Row></Row>
+                            <Row><input type="file" onChange={ev => setFile(ev.target.files![0])} /></Row>
+                            <Row><Col md={{ span: 2, offset: 0 }}><Button onClick={() => restoreFromCSV(file)}>Upload</Button></Col></Row></Row>}
+                        </Row>
                     </Col>
-                    <Col lg={{ span: 1, offset: 4 }}>
+                    <Col xl={{ span: "auto", offset: 4 }}>
                         <Row><Button onClick={() => downloadCSV()}>Download</Button></Row>
                         <Row><Button onClick={() => deleteFromDB()}>Delete</Button></Row>
                     </Col>
                     
                 </Row>   
                 <Row className="mb-2">
-                    <Col xl={{span: 11, offset: 0}}></Col>
-                    <Col xl={{ span: 1, offset: 0 }}>
+                    <Col></Col>
+                    <Col xl={{ span: "auto", offset: 0 }}>
                         <Button variant="warning" onClick={() => reloadPlaylist()}><ArrowClockwise /> Reload</Button>
                     </Col>  
                 </Row>     

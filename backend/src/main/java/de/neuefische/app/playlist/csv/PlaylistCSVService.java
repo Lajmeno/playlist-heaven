@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -34,7 +33,7 @@ public class PlaylistCSVService {
         }
     }
 
-    public Optional<List<String>> readCSV(InputStream content){
+    public List<String> readCSV(InputStream content) throws Exception {
         try (Reader reader = new BufferedReader(new InputStreamReader(content))) {
             CsvToBean<PlaylistCSVTrack> csvToBean = new CsvToBeanBuilder<PlaylistCSVTrack>(reader)
                     .withType(PlaylistCSVTrack.class)
@@ -47,11 +46,11 @@ public class PlaylistCSVService {
                     .map(item -> item.getSpotifyUri())
                     .toList();
 
-            return Optional.of(uris);
+            return uris;
 
         } catch (IllegalStateException | IllegalArgumentException | IOException e) {
             LOGGER.info("csv could not be imported", e);
-            return Optional.empty();
+            throw new Exception(e.getMessage());
         }
     }
 

@@ -19,6 +19,6 @@ export interface PlaylistsResponse{
     name : string,
     tracks : Array<PlaylistTrack>,
     images : Array<PlaylistImage>,
-    spotifyId: string
-
+    spotifyId: string,
+    spotifyOwnerId: string
 }
