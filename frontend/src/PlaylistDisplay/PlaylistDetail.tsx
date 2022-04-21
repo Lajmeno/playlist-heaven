@@ -164,7 +164,7 @@ export default function PlaylistDetail(){
                             <Button className="mab-1" onClick={() => restoreWindow === true ? setRestoreWindow(false) : setRestoreWindow(true) }>Restore</Button>
                             </Col>}
                            </Row>
-                           <Row className="bg-info">
+                           <Row className="bg-background">
                             {restoreWindow && <Row>
                                 <Row></Row>
                             <Row><input type="file" onChange={ev => setFile(ev.target.files![0])} /></Row>
