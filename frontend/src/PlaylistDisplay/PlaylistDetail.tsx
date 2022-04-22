@@ -158,10 +158,10 @@ export default function PlaylistDetail(){
                     </Col>
                     <Col lg={{ span: 4, offset: 0 }}>
                         <Row className="mb-5"><h2>{playlist.name}</h2></Row>
-                        <Row className="mb-5"><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank" rel="noreferrer noopener" ><Button>Open in Spotify</Button></a></Row>
+                        <Row className="mb-5"><Col lg={{ span: 8, offset: 0 }}><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank" rel="noreferrer noopener" ><Button>Open in Spotify</Button></a></Col></Row>
                         <Row>{playlist.spotifyOwnerId === userId &&
-                        <Col className="mb-10" md={{ span: 4, offset: 0 }}>
-                            <Button className="mab-1" onClick={() => restoreWindow === true ? setRestoreWindow(false) : setRestoreWindow(true) }>Restore</Button>
+                        <Col className="mb-10" md={{ span: 6, offset: 0 }}>
+                            <Button className="mab-1" onClick={() => restoreWindow === true ? setRestoreWindow(false) : setRestoreWindow(true) }>Restore Backup</Button>
                             </Col>}
                            </Row>
                            <Row className="bg-background">
