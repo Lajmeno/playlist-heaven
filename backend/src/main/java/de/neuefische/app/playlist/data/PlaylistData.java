@@ -27,7 +27,7 @@ public class PlaylistData {
     public static PlaylistData of(PlaylistDTO playlistDTO){
         List<PlaylistTrack> tracks = playlistDTO.getTracks().stream().map(track -> PlaylistTrack.of(track)).toList();
         List<PlaylistImage> images = playlistDTO.getImages().stream().map(image -> PlaylistImage.of(image)).toList();
-        return new PlaylistData(null, playlistDTO.getName(), playlistDTO.getSpotifyId(), tracks, images, null, null);
+        return new PlaylistData(null, playlistDTO.getName(), playlistDTO.getSpotifyId(), tracks, images, null, playlistDTO.getSpotifyOwnerId());
 
     }
 
