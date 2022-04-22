@@ -26,8 +26,6 @@ import java.util.Objects;
 @RequestMapping("/api/callback")
 public class SpotifyCallbackController {
 
-    private static final String ACCESS_TOKEN_URL = "https://accounts.spotify.com/api/token";
-
     private final RestTemplate restTemplate;
     private final String spotifyClientId;
     private final String spotifyAuthSecret;
@@ -61,7 +59,7 @@ public class SpotifyCallbackController {
         HttpHeaders headers = createGetTokenHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = restTemplate.exchange(
-                ACCESS_TOKEN_URL,
+                "https://accounts.spotify.com/api/token",
                 HttpMethod.POST,
                 request,
                 SpotifyGetAccessTokenBody.class

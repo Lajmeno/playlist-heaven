@@ -7,6 +7,6 @@ import java.util.List;
 public record SpotifyGetAllUserPlaylistsBody(
         @JsonProperty("total") int total,
         @JsonProperty("next") String next,
-        @JsonProperty("items") List<SpotifyGetAllUserPlaylistsItems> items
+        @JsonProperty("items") List<SpotifyGetAllUserPlaylistsItem> items
 ) {
 }
