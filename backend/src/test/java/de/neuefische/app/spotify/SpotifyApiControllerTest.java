@@ -6,10 +6,14 @@ import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.data.PlaylistTrack;
 import de.neuefische.app.playlist.dto.PlaylistDTO;
+import de.neuefische.app.playlist.dto.PlaylistImageDTO;
+import de.neuefische.app.playlist.dto.PlaylistTrackArtistDTO;
+import de.neuefische.app.playlist.dto.PlaylistTrackDTO;
 import de.neuefische.app.security.JwtService;
 import de.neuefische.app.spotify.oauth.SpotifyGetAccessTokenBody;
 import de.neuefische.app.spotify.playlistresponse.*;
 import de.neuefische.app.spotify.playlistsearch.*;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,12 +136,16 @@ class SpotifyApiControllerTest {
         String jwt = jwtService.createToken(new HashMap<>(), spotifyUserId);
         HttpHeaders authorizationHeader = new HttpHeaders();
         authorizationHeader.set("Authorization", "Bearer" + jwt);
-        HttpEntity<String> httpEntityUser1Get = new HttpEntity<>(authorizationHeader);
-        ResponseEntity<PlaylistDTO> reloadPlaylistsResponse= restTemplate.exchange("/api/spotify/search"+searchValue, HttpMethod.GET, httpEntityUser1Get, PlaylistDTO.class);
+        HttpEntity<String> httpEntitySearch = new HttpEntity<>(authorizationHeader);
+        ResponseEntity<PlaylistDTO[]> reloadPlaylistsResponse= restTemplate.exchange(
+                "/api/spotify/search/"+searchValue,
+                HttpMethod.GET,
+                httpEntitySearch,
+                PlaylistDTO[].class);
 
         assertThat(reloadPlaylistsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-
+        PlaylistDTO playlistDTO = new PlaylistDTO(searchValue, spotifyPlaylistId, null, List.of(new PlaylistImageDTO("image.url")), "ownerId");
+        Assertions.assertThat(reloadPlaylistsResponse.getBody()).contains(playlistDTO);
 
     }
 
