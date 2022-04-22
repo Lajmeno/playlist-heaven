@@ -5,9 +5,11 @@ import de.neuefische.app.playlist.csv.PlaylistCSVService;
 import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.data.PlaylistTrack;
+import de.neuefische.app.playlist.dto.PlaylistDTO;
 import de.neuefische.app.security.JwtService;
 import de.neuefische.app.spotify.oauth.SpotifyGetAccessTokenBody;
 import de.neuefische.app.spotify.playlistresponse.*;
+import de.neuefische.app.spotify.playlistsearch.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +95,50 @@ class SpotifyApiControllerTest {
         ResponseEntity<String> reloadPlaylistsResponse= restTemplate.exchange("/api/spotify", HttpMethod.GET, httpEntityUser1Get, String.class);
 
         assertThat(reloadPlaylistsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+
+    @Test
+    void shoudlSearchAndRetrievePlaylist(){
+        PlaylistRepository playlistRepository = Mockito.mock(PlaylistRepository.class);
+        String spotifyUserId = "userId";
+        String spotifyPlaylistId = "playlistId";
+        String searchValue = "top100";
+
+        ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = ResponseEntity.ok(new SpotifyGetAccessTokenBody("","","",0, ""));
+
+        when(mockTemplate.exchange(
+                Mockito.eq("https://accounts.spotify.com/api/token"),
+                Mockito.eq(HttpMethod.POST),
+                Mockito.any(HttpEntity.class),
+                Mockito.eq(SpotifyGetAccessTokenBody.class)))
+                .thenReturn(accessTokenResponse);
+
+
+        SpotifySearchPlaylist searchPlaylist = new SpotifySearchPlaylist(searchValue, spotifyPlaylistId, List.of(new SpotifySearchPlaylistImages("image.url")), new SpotifySearchPlaylistOwner("ownerId"));
+
+        ResponseEntity<SpotifySearchPlaylistBody> searchPlaylistBodyResponse = ResponseEntity.ok(new SpotifySearchPlaylistBody(new SpotifySearchPlaylistItems(List.of(searchPlaylist))));
+
+        when(mockTemplate.exchange(
+                Mockito.eq("https://api.spotify.com/v1/search?q=" + searchValue +"&type=playlist&limit=45"),
+                Mockito.eq(HttpMethod.GET),
+                Mockito.any(HttpEntity.class),
+                Mockito.eq(SpotifySearchPlaylistBody.class)))
+                .thenReturn(searchPlaylistBodyResponse);
+
+
+
+        JwtService jwtService = new JwtService("my-super-duper-secret");
+        String jwt = jwtService.createToken(new HashMap<>(), spotifyUserId);
+        HttpHeaders authorizationHeader = new HttpHeaders();
+        authorizationHeader.set("Authorization", "Bearer" + jwt);
+        HttpEntity<String> httpEntityUser1Get = new HttpEntity<>(authorizationHeader);
+        ResponseEntity<PlaylistDTO> reloadPlaylistsResponse= restTemplate.exchange("/api/spotify/search"+searchValue, HttpMethod.GET, httpEntityUser1Get, PlaylistDTO.class);
+
+        assertThat(reloadPlaylistsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+
+
     }
 
 
