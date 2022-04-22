@@ -1,6 +1,7 @@
 package de.neuefische.app.spotify;
 
 import de.neuefische.app.playlist.PlaylistRepository;
+import de.neuefische.app.playlist.csv.PlaylistCSVService;
 import de.neuefische.app.playlist.data.PlaylistData;
 import de.neuefische.app.playlist.data.PlaylistImage;
 import de.neuefische.app.playlist.data.PlaylistTrack;
@@ -10,20 +11,25 @@ import de.neuefische.app.spotify.playlistresponse.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SpotifyApiControllerTest {
 
@@ -49,7 +55,7 @@ class SpotifyApiControllerTest {
                 .thenReturn(accessTokenResponse);
 
 
-        List<SpotifyGetAllUserPlaylistsItems> items = List.of(new SpotifyGetAllUserPlaylistsItems("pl1", spotifyPlaylistId, List.of(new SpotifyPlaylistImages("image.url"))));
+        List<SpotifyGetAllUserPlaylistsItem> items = List.of(new SpotifyGetAllUserPlaylistsItem("pl1", spotifyPlaylistId, List.of(new SpotifyPlaylistImages("image.url"))));
         ResponseEntity<SpotifyGetAllUserPlaylistsBody> allUserPlaylistResponse = ResponseEntity.ok(new SpotifyGetAllUserPlaylistsBody(2, "nextUrl", items ));
 
         when(mockTemplate.exchange(
@@ -91,6 +97,29 @@ class SpotifyApiControllerTest {
         ResponseEntity<String> reloadPlaylistsResponse= restTemplate.exchange("/api/spotify", HttpMethod.GET, httpEntityUser1Get, String.class);
 
         assertThat(reloadPlaylistsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Test
+    void shouldRestorePlaylistFromCSVUpload() throws Exception {
+
+        PlaylistCSVService playlistCSVService = Mockito.mock(PlaylistCSVService.class);
+        String spotifyUserId = "userID";
+        String spotifyPlaylistId = "playlistID";
+
+        MockMultipartFile file = new MockMultipartFile("csv", "filename.csv", "text/csv", "text_csv".getBytes());
+        //generate csv file for
+        when(playlistCSVService.readCSV(file.getInputStream())).thenReturn(List.of("1"));
+
+        MockMultipartHttpServletRequestBuilder multipartRequest =
+                MockMvcRequestBuilders.multipart("/api/spotify/" + spotifyUserId + "/" + spotifyUserId);
+
+        mockMvc.perform(multipartRequest.file(file))
+                .andExpect(status().isOk());
+
     }
 
 }

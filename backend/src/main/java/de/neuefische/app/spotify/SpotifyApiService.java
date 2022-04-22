@@ -96,7 +96,7 @@ public class SpotifyApiService {
         for(PlaylistTracksRequest uriChunks : uriPartitions){
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<PlaylistTracksRequest> request = new HttpEntity<>(uriChunks, headers);
-            ResponseEntity<SpotifyGetPlaylistBody> userPlaylistsResponse = restTemplate.exchange(
+            restTemplate.exchange(
                     "https://api.spotify.com/v1/playlists/" + playlistId +"/tracks",
                     httpMethod,
                     request,
@@ -129,7 +129,7 @@ public class SpotifyApiService {
     }
 
     public void getSpotifyUserPlaylists(ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse, String spotifyUserId) {
-        List<SpotifyGetAllUserPlaylistsItems> playlists = new ArrayList<>();
+        List<SpotifyGetAllUserPlaylistsItem> playlists = new ArrayList<>();
         boolean hasPlaylistsLeftToGet = true;
         int i = 0;
         while(hasPlaylistsLeftToGet){
@@ -144,7 +144,7 @@ public class SpotifyApiService {
             hasPlaylistsLeftToGet = userPlaylistsResponse.getBody().total() > (i * 50) && !Objects.equals(userPlaylistsResponse.getBody().next(), null);
         }
 
-        for(SpotifyGetAllUserPlaylistsItems playlist : playlists){
+        for(SpotifyGetAllUserPlaylistsItem playlist : playlists){
             PlaylistData playlistData =getPlaylistWithTracks(accessTokenResponse.getBody(), playlist.id());
             playlistData.setSpotifyUserId(spotifyUserId);
             playlistService.savePlaylist(playlistData);
@@ -187,7 +187,7 @@ public class SpotifyApiService {
 
             SpotifyPlaylistTracks tracksForInfo = userPlaylistsNextTracksResponse.getBody();
             urlForNextTracks = userPlaylistsNextTracksResponse.getBody().next();
-            hasMoreTracksToGet = !Objects.equals(tracksForInfo.next(), null) && (( tracksForInfo.total() - tracksForInfo.offset() ) >= 100);
+            hasMoreTracksToGet = !Objects.equals(tracksForInfo.next(), null) && ((tracksForInfo.total() - tracksForInfo.offset() ) > 100);
         }
         return new PlaylistData(null, responseBody.name(), responseBody.id(), tracks, images, null, responseBody.owner().id());
     }

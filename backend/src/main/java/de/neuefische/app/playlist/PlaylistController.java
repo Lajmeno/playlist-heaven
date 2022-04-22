@@ -5,15 +5,14 @@ import de.neuefische.app.playlist.dto.PlaylistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
-@RequestMapping("api/playlists")
+@RequestMapping("/api/playlists")
 @RequiredArgsConstructor
 @CrossOrigin
 public class PlaylistController {
