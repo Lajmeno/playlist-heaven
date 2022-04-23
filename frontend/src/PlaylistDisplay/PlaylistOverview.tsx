@@ -100,13 +100,13 @@ export default function PlaylistOverview() {
                             </Col>
                     </Row>
                     <Row md="auto" className="justify-content-center">{<PaginationBasic amount={paginationAmount} page={page} setPage={setPage}/>}</Row>
-                    <Row>
+                    <Row className="row row-cols-4" >
                         {playlists.length > 1 &&   
                         playlists
                         .filter(ele => ele.name.toLowerCase().includes(searchValue.toLowerCase()))
                         .map((item, index) => {
                             if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
-                                return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>;
+                                return <Col className=""><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>;
                             }
                             return <></>;
                             })
