@@ -71,7 +71,7 @@ public class SpotifyApiService {
 
     }
 
-    public Optional<PlaylistData> getPlaylistFromSpotify(String id){
+    public Optional<PlaylistData>  getPlaylistFromSpotify(String id){
         ResponseEntity<SpotifyGetAccessTokenBody> accessTokenResponse = getRefreshTokenFromSpotify();
         try {
             PlaylistData playlistData = getPlaylistWithTracks(accessTokenResponse.getBody(), id);
