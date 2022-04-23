@@ -159,17 +159,17 @@ export default function PlaylistDetail(){
                     <Col lg={{ span: 4, offset: 0 }}>
                         <Row className="mb-5"><h2>{playlist.name}</h2></Row>
                         <Row className="mb-5"><Col lg={{ span: 8, offset: 0 }}><a href={`https://open.spotify.com/playlist/${playlist.spotifyId}`} target="_blank" rel="noreferrer noopener" ><Button>Open in Spotify</Button></a></Col></Row>
-                        <Row>{playlist.spotifyOwnerId === userId &&
-                        <Col className="mb-10" md={{ span: 6, offset: 0 }}>
+                        <Col >{playlist.spotifyOwnerId === userId &&
+                        <Col className="mb-10" md={{ span: 0, offset: 0 }}>
                             <Button className="mab-1" onClick={() => restoreWindow === true ? setRestoreWindow(false) : setRestoreWindow(true) }>Restore Backup</Button>
                             </Col>}
-                           </Row>
-                           <Row className="bg-background">
-                            {restoreWindow && <Row>
+                           </Col>
+                           <Col >
+                            {restoreWindow && <Row className="bg-background">
                                 <Row></Row>
-                            <Row><input type="file" onChange={ev => setFile(ev.target.files![0])} /></Row>
-                            <Row><Col md={{ span: 2, offset: 0 }}><Button onClick={() => restoreFromCSV(file)}>Upload</Button></Col></Row></Row>}
-                        </Row>
+                            <Row className="mb-0"><Col xl={{ span: 0, offset: 1 }}><input type="file" onChange={ev => setFile(ev.target.files![0])} /></Col></Row>
+                            <Row><Col md={{ span: 0, offset: 1 }}><Button onClick={() => restoreFromCSV(file)}>Upload</Button></Col></Row></Row>}
+                        </Col>
                     </Col>
                     <Col xl={{ span: "auto", offset: 4 }}>
                         <Row><Button onClick={() => downloadCSV()}>Download</Button></Row>

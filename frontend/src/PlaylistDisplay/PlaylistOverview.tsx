@@ -84,7 +84,7 @@ export default function PlaylistOverview() {
                     <Row className="search-collection" style={searchOn ? {} : {display:"none"} }>
                             <Col md={{ span: 4, offset: 0 }}>
                                 <InputGroup className="mb-3" >
-                                    <InputGroup.Text className="text-background bg-warning" id="inputGroup-sizing-default" >Search</InputGroup.Text>
+                                    <InputGroup.Text className="text-white bg-primary" id="inputGroup-sizing-default" >Search</InputGroup.Text>
                                     <FormControl
                                     className="bg-light text-background"
                                     value={searchValue}
@@ -100,13 +100,13 @@ export default function PlaylistOverview() {
                             </Col>
                     </Row>
                     <Row md="auto" className="justify-content-center">{<PaginationBasic amount={paginationAmount} page={page} setPage={setPage}/>}</Row>
-                    <Row className="row row-cols-4" >
+                    <Row className="row-cols-5" >
                         {playlists.length > 1 &&   
                         playlists
                         .filter(ele => ele.name.toLowerCase().includes(searchValue.toLowerCase()))
                         .map((item, index) => {
                             if(index < (page * amountItemsOnPage) && index >= ((page - 1) * amountItemsOnPage)){
-                                return <Col className=""><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>;
+                                return <Col><PlaylistItem name={item.name} key={`$(item.spotifyId}-${index}`} images={item.images} spotifyId={item.spotifyId}/></Col>;
                             }
                             return <></>;
                             })
