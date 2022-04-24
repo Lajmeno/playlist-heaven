@@ -39,7 +39,7 @@ class PlaylistControllerTest {
     private RestTemplate mockTemplate;
 
     @BeforeEach
-    void shouldAddNewUserAfterCallbackAndLoadPlaylists() {
+    void setupToAddUserAndPlaylists() {
 
         String spotifyUserId = "spotifyUserId";
         String spotifyPlaylist1Id = "pl-id-1";

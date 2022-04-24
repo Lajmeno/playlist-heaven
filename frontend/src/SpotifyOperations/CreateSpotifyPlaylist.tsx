@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Button, Col, Container, FormControl, InputGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -10,6 +11,8 @@ export default function CreateSpotifyPlaylist() {
     const [playlistTitle, setPlaylistTitle] = useState('');
     const [file, setFile] = useState({} as File)
     const [errorMessage, setErrorMessage] = useState('');
+
+    const navigate = useNavigate();
     
     const performFileUpload = (file: File | null) => {
         const fileData = new FormData();
@@ -26,6 +29,7 @@ export default function CreateSpotifyPlaylist() {
         })
         .then(() => {
             setErrorMessage('');
+            navigate('/overview')
         })
         .catch(error => {
             if (error.response.status === 400) {
@@ -37,7 +41,7 @@ export default function CreateSpotifyPlaylist() {
     return(
         <Container>
             <Row md="auto" className="justify-content-center">
-            <h2>Create Spotify Playlist from CSV</h2>
+            <h2>Create New Spotify Playlist from a .csv-File</h2>
             </Row>
             <Row md="auto" className="justify-content-center">
                 <Col  md={{ span: 3, offset: 0 }}>
