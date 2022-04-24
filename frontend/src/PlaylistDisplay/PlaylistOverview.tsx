@@ -78,7 +78,7 @@ export default function PlaylistOverview() {
                     <Row>
                         <Col xl={{ span: 2, offset: 0 }}><Button className="custom-btn" onClick={() => {searchOn ? setSearchOn(false) : setSearchOn(true)}}>Search Collection</Button></Col>
                         <Col xl={{ span: 2, offset: 8 }}>
-                            <Button onClick={() => reloadPlaylists()}>Reload your Spotify-Playlists</Button>
+                            <Button onClick={() => reloadPlaylists()}>Reload Spotify-Playlists</Button>
                         </Col>
                     </Row>
                     <Row className="search-collection" style={searchOn ? {} : {display:"none"} }>

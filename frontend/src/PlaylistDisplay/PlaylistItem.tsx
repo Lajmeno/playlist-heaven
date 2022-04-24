@@ -18,7 +18,7 @@ export default function PlaylistItem(props:PlaylistItemProps) {
 
     return(
         <div>   
-            <Card className="ml-3" style={{ width: '14rem' }} bg="secondary" text="secondary">
+            <Card className="ml-3" style={{ width: '13rem' }} bg="secondary" text="secondary">
                 <Link className="link" to={`${props.spotifyId}`} style={{ textDecoration: 'none' }}>
                     <Card.Img variant="top" src={props.images.length > 0 ? (props.images.length > 1 ? props.images[1].url : props.images[0].url) :require('../images/default-image.png') } />
                     <Card.Body>

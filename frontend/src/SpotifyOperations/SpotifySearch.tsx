@@ -51,6 +51,7 @@ export default function SpotifySearch(){
             <Row className="search-collection" >
                     <Col md={{ span: 4, offset: 4 }}>
                         <InputGroup className="mb-3" >
+                        <InputGroup.Text className="text-white bg-primary" id="inputGroup-sizing-default" >Search</InputGroup.Text>
                             <FormControl
                             className="bg-light text-black"
                             value={searchValue}
