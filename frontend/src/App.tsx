@@ -1,6 +1,6 @@
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { Container } from "react-bootstrap";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import NavigationBar from "./NavigationBar";
 
